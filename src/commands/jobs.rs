@@ -8,7 +8,7 @@ use serde_json::{Value, json};
 use std::path::{Path, PathBuf};
 
 pub fn resume_argv(ids: &[String]) -> Vec<String> {
-    let mut argv = vec!["suno".into(), "status".into()];
+    let mut argv = vec!["gsuno".into(), "status".into()];
     argv.extend_from_slice(ids);
     argv.push("--wait".into());
     argv
@@ -64,7 +64,7 @@ pub fn existing(req: &crate::api::types::GenerateRequest) -> Result<Option<Vec<S
         return Ok(Some(ids));
     }
     Err(CliError::InvalidInput(format!(
-        "request {} has state {}; inspect `suno jobs` and `suno list` before using a new request ID",
+        "request {} has state {}; inspect `gsuno jobs` and `gsuno list` before using a new request ID",
         req.transaction_uuid, receipt["state"]
     )))
 }
@@ -75,7 +75,7 @@ pub fn prepare(req: &crate::api::types::GenerateRequest) -> Result<PathBuf, CliE
     let path = dir.join(format!("{}.json", req.transaction_uuid));
     let receipt = json!({"transaction_id":req.transaction_uuid, "request_sha256":fingerprint(req)?,
         "updated_at":chrono::Utc::now().to_rfc3339(), "state":"submitting", "ids":[],
-        "next_action":{"argv":["suno", "list"], "note":"Check the library before resubmitting an uncertain request"}});
+        "next_action":{"argv":["gsuno", "list"], "note":"Check the library before resubmitting an uncertain request"}});
     use std::io::Write;
     let mut file = tempfile::NamedTempFile::new_in(&dir)?;
     file.write_all(serde_json::to_string_pretty(&receipt)?.as_bytes())?;
@@ -98,7 +98,7 @@ pub fn save(path: &Path, transaction: &str, ids: &[String], state: &str) -> Resu
         "updated_at": chrono::Utc::now().to_rfc3339(),
         "state": state,
         "ids": ids,
-        "next_action": if ids.is_empty() { json!({"argv":["suno", "list"], "note":"Check the library before resubmitting an uncertain request"}) }
+        "next_action": if ids.is_empty() { json!({"argv":["gsuno", "list"], "note":"Check the library before resubmitting an uncertain request"}) }
             else { json!({"argv": resume_argv(ids)}) },
     });
     let temp = path.with_extension("json.tmp");
@@ -131,7 +131,7 @@ pub fn run(limit: u32, fmt: OutputFormat) -> Result<(), CliError> {
                     Ok(v) if v.is_object() => v,
                     _ => {
                         json!({"state":"unreadable", "transaction_id":path.file_stem().unwrap_or_default().to_string_lossy(),
-                        "ids":[], "next_action":{"argv":["suno","list"],"note":"Receipt is unreadable; inspect the library before resubmitting"}})
+                        "ids":[], "next_action":{"argv":["gsuno","list"],"note":"Receipt is unreadable; inspect the library before resubmitting"}})
                     }
                 };
                 receipt["path"] = json!(path);

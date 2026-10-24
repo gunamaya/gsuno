@@ -428,7 +428,7 @@ mod tests {
             vec!["status", "clip", "--download", "/tmp/music"],
             vec!["download", "clip"],
         ] {
-            let mut command = vec!["suno"];
+            let mut command = vec!["gsuno"];
             command.extend(argv);
             command.extend(["--source", "remote-pool"]);
             let cli = crate::cli::Cli::try_parse_from(command).unwrap();

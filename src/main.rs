@@ -37,7 +37,7 @@ fn resolve_model(
             <ModelVersion as clap::ValueEnum>::from_str(&cfg.default_model, true).map_err(|_| {
                 CliError::Config(format!(
                     "config default_model '{}' is not a valid --model value — \
-                     fix it with `suno config set default_model v6`",
+                     fix it with `gsuno config set default_model v6`",
                     cfg.default_model
                 ))
             })
@@ -54,7 +54,7 @@ fn read_input_file(path: &str) -> Result<String, CliError> {
 }
 
 /// Credit protection shared by every command that sends lyrics into the
-/// v2-web `prompt` field (generate, extend): an unfilled `suno write`
+/// v2-web `prompt` field (generate, extend): an unfilled `gsuno write`
 /// scaffold would be sung verbatim at real credit cost. Refuse it unless
 /// --allow-placeholders is supplied.
 fn reject_unfilled_scaffold(
@@ -235,7 +235,7 @@ async fn run(cli: Cli, fmt: OutputFormat) -> Result<(), CliError> {
                 // before the CLI's own staleness check fires.
                 let cookie = state.clerk_client_cookie.clone().ok_or_else(|| {
                     CliError::Config(
-                        "no Clerk session cookie stored — run `suno auth --login` first".into(),
+                        "no Clerk session cookie stored — run `gsuno auth --login` first".into(),
                     )
                 })?;
                 let http = auth::http_client()?;
@@ -377,7 +377,7 @@ async fn run(cli: Cli, fmt: OutputFormat) -> Result<(), CliError> {
                     if let Some(cursor) = feed.next_cursor.as_deref()
                         && feed.has_more
                     {
-                        eprintln!("\nNext page: suno list --cursor {cursor}");
+                        eprintln!("\nNext page: gsuno list --cursor {cursor}");
                     }
                 }
             }
@@ -846,7 +846,7 @@ async fn run(cli: Cli, fmt: OutputFormat) -> Result<(), CliError> {
                     .iter()
                     .filter_map(|v| v["id"].as_str().map(str::to_owned))
                     .collect();
-                let mut argv = vec!["suno".to_string(), "download".to_string()];
+                let mut argv = vec!["gsuno".to_string(), "download".to_string()];
                 argv.extend(ids);
                 argv.extend([
                     "--format".to_string(),
@@ -882,7 +882,7 @@ async fn run(cli: Cli, fmt: OutputFormat) -> Result<(), CliError> {
             // non-destructive (it undoes a trash), so it needs no -y.
             if !args.yes && !args.confirm && !args.restore {
                 return Err(CliError::InvalidInput(format!(
-                    "delete requires --confirm — re-run: suno delete {} --confirm",
+                    "delete requires --confirm — re-run: gsuno delete {} --confirm",
                     args.ids.join(" ")
                 )));
             }
@@ -1125,7 +1125,7 @@ async fn main() {
                 output::json::error(
                     "invalid_input",
                     e.to_string().trim_end(),
-                    "Check arguments with `suno --help`",
+                    "Check arguments with `gsuno --help`",
                 );
             } else {
                 eprint!("{e}");

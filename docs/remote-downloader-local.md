@@ -34,7 +34,7 @@ Choose **Approve access & save**, then **Poll now**. Keep Chrome running and com
 python3 scripts/remote_downloader.py status
 ```
 
-This prints safe JSON with job ID, clip ID, status, receipt status, received file path, byte count and SHA-256, without the worker token or upload URL. The helper reports service state; `suno download --source remote-pool` and generation/status `--download DIR --source remote-pool` now consume this service through its admin API.
+This prints safe JSON with job ID, clip ID, status, receipt status, received file path, byte count and SHA-256, without the worker token or upload URL. The helper reports service state; `gsuno download --source remote-pool` and generation/status `--download DIR --source remote-pool` now consume this service through its admin API.
 
 `received` means raw bytes passed a basic container-signature check and were atomically stored; it does not prove audio decoding/playability. Verify the received file with an audio player or decoder before reporting download success. Receipt `uploaded` independently confirms the worker acknowledged upload. Failed receipt delivery does not discard received files. Duplicate event IDs are accepted only for identical payloads. A repeated PUT is rejected, not silently overwritten.
 
@@ -190,8 +190,8 @@ server. No tunnel is required for an HTTPS deployment:
 ```sh
 export SUNO_REMOTE_POOL_URL=https://gsunopool.gunamaya.id
 export SUNO_REMOTE_POOL_TOKEN_FILE="$HOME/.suno/gsunopool-token"
-suno download CLIP_UUID --source remote-pool --format wav --output ./songs
-suno status CLIP_UUID --wait --download ./songs --source remote-pool
+gsuno download CLIP_UUID --source remote-pool --format wav --output ./songs
+gsuno status CLIP_UUID --wait --download ./songs --source remote-pool
 ```
 
 The compatible gsuno-pool API uses the same authenticated `/admin/health`,
@@ -201,10 +201,10 @@ reports readiness, not token validity or browser/provider availability. No remot
 server implementation is installed or modified by this CLI.
 
 **yt-to-flowmusic integration:** export both variables before starting the parent
-so its child `suno` inherits them, and make the parent pass `--source remote-pool`
-to `suno` downloads or creation/status commands with `--download`. Propagate that
+so its child `gsuno` inherits them, and make the parent pass `--source remote-pool`
+to `gsuno` downloads or creation/status commands with `--download`. Propagate that
 source on recovery too. Environment configuration alone leaves `auto` unchanged.
-`suno` does not autoload `.env`; use explicit exports or the parent's environment
+`gsuno` does not autoload `.env`; use explicit exports or the parent's environment
 loader. Existing local defaults and token paths are unchanged.
 
 The CLI checks authenticated admin availability before costly generation when
@@ -235,5 +235,5 @@ service and an authorized browser worker; it is not established by mock tests.
 ## Lyrics
 
 The service transports audio only and does not create LRC sidecars. Use
-`suno timed-lyrics CLIP_UUID --lrc > song.lrc` as a separate authenticated Suno
+`gsuno timed-lyrics CLIP_UUID --lrc > song.lrc` as a separate authenticated Suno
 API request when alignment is available. Automatic LRC export is not implemented.

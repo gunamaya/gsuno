@@ -27,7 +27,7 @@ pub const GUIDES: &[Guide] = &[
     },
     Guide {
         name: "songwriting",
-        // No `write` alias: `suno write` is a command, and `suno guide write`
+        // No `write` alias: `gsuno write` is a command, and `gsuno guide write`
         // reading as a synonym for it confused the composer with its manual.
         aliases: &["grammar", "songwriting-guide"],
         description: "How to write for Suno: structure, meta-tags, genres, vocal styles, hooks (the base grammar)",
@@ -55,7 +55,7 @@ struct GuideSummary {
     description: &'static str,
 }
 
-/// `suno guide` with no name lists; with a name prints that guide's raw
+/// `gsuno guide` with no name lists; with a name prints that guide's raw
 /// markdown to stdout (a documented envelope exception, like
 /// `timed-lyrics --lrc`).
 pub fn run(name: Option<String>, fmt: OutputFormat, quiet: bool) -> Result<(), CliError> {
@@ -86,7 +86,7 @@ fn list(fmt: OutputFormat, quiet: bool) -> Result<(), CliError> {
                 }
             }
             if !quiet {
-                eprintln!("\nRead one with: suno guide <name>");
+                eprintln!("\nRead one with: gsuno guide <name>");
             }
         }
     }

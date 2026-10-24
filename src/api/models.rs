@@ -63,14 +63,14 @@ impl SunoClient {
         } else if let Some(model) = billing.models.iter().find(|m| m.external_key == req.mv) {
             if !model.can_use {
                 return Err(CliError::Config(format!(
-                    "{} is unavailable on this account; run `suno models`",
+                    "{} is unavailable on this account; run `gsuno models`",
                     model.name
                 )));
             }
             return validate_lengths(req, &model.max_lengths);
         }
         Err(CliError::InvalidInput(format!(
-            "model '{}' is absent from Suno's current catalogue; run `suno models` and select an available model",
+            "model '{}' is absent from Suno's current catalogue; run `gsuno models` and select an available model",
             req.mv
         )))
     }

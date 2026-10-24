@@ -3,12 +3,12 @@
 //! managed-source path that consults GitHub Releases.
 
 mod common;
-use common::{skip_live, suno};
+use common::{gsuno, skip_live};
 
 fn update_json(source: &str, extra: &[&str]) -> (Option<i32>, Vec<u8>, Vec<u8>) {
     let mut args = vec!["update"];
     args.extend_from_slice(extra);
-    let out = suno()
+    let out = gsuno()
         .env("SUNO_INSTALL_SOURCE", source)
         .args(&args)
         .output()
@@ -18,7 +18,7 @@ fn update_json(source: &str, extra: &[&str]) -> (Option<i32>, Vec<u8>, Vec<u8>) 
 
 #[test]
 fn homebrew_full_update_returns_offline_owner_instructions() {
-    let bin = assert_cmd::cargo::cargo_bin("suno");
+    let bin = assert_cmd::cargo::cargo_bin("gsuno");
     let before = std::fs::metadata(&bin).unwrap().modified().unwrap();
     let (code, stdout, _) = update_json("homebrew", &[]);
     assert_eq!(code, Some(0));
@@ -30,10 +30,7 @@ fn homebrew_full_update_returns_offline_owner_instructions() {
     assert_eq!(json["data"]["requires_skill_reinstall"], false);
     assert_eq!(json["data"]["install_source"], "homebrew");
     assert_eq!(json["data"]["update_mode"], "package_manager");
-    assert_eq!(
-        json["data"]["upgrade_command"],
-        "brew upgrade paperfoot/tap/suno"
-    );
+    assert_eq!(json["data"]["upgrade_command"], serde_json::Value::Null);
 
     let after = std::fs::metadata(&bin).unwrap().modified().unwrap();
     assert_eq!(before, after, "update must not touch a brew-owned binary");
@@ -51,7 +48,7 @@ fn cargo_update_returns_offline_owner_instructions() {
     assert_eq!(json["data"]["update_mode"], "package_manager");
     assert_eq!(
         json["data"]["upgrade_command"],
-        "cargo install --locked --force suno"
+        "cargo install --locked --force gsuno"
     );
 }
 
@@ -75,7 +72,7 @@ fn invalid_install_source_exits_2() {
 
 #[test]
 fn unknown_full_update_returns_honest_instructions_only_result() {
-    let bin = assert_cmd::cargo::cargo_bin("suno");
+    let bin = assert_cmd::cargo::cargo_bin("gsuno");
     let before = std::fs::metadata(&bin).unwrap().modified().unwrap();
     let (code, stdout, stderr) = update_json("unknown", &[]);
     assert_eq!(code, Some(0));
@@ -129,7 +126,7 @@ fn standalone_check_reaches_github_live_without_replacing() {
     if skip_live() {
         return;
     }
-    let bin = assert_cmd::cargo::cargo_bin("suno");
+    let bin = assert_cmd::cargo::cargo_bin("gsuno");
     let before = std::fs::metadata(&bin).unwrap().modified().unwrap();
     let (code, stdout, _) = update_json("standalone", &["--check"]);
     assert_eq!(code, Some(0));

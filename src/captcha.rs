@@ -264,7 +264,7 @@ async fn ensure_chrome_running(mode: ChromeMode) -> Result<(), CliError> {
     let profiles = crate::config::data_dir().join("chrome-profiles");
     std::fs::create_dir_all(&profiles)?;
     let profile = tempfile::Builder::new()
-        .prefix("suno-")
+        .prefix("gsuno-")
         .tempdir_in(profiles)?;
     let profile_dir = profile.path();
 

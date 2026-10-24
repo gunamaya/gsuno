@@ -1,6 +1,6 @@
 # Priming Songs
 
-A specialized guide for one type of song: research/priming songs. It builds on the base songwriting grammar in `suno guide songwriting` — that guide teaches section tags, meta-tags, vocal direction, and structure; this one teaches how to layer evidence-graded psychological priming into a lyric and ship it as a research artefact.
+A specialized guide for one type of song: research/priming songs. It builds on the base songwriting grammar in `gsuno guide songwriting` — that guide teaches section tags, meta-tags, vocal direction, and structure; this one teaches how to layer evidence-graded psychological priming into a lyric and ship it as a research artefact.
 
 Every output here is two things at once: a Suno-ready song **and** a research artefact — a Prime-Stack Map, evidence grades, a selection rationale, and a predicted effect with honest confidence intervals. If you produce the song without the artefact, you have not done the task.
 
@@ -544,7 +544,7 @@ Target-specific notes:
 
 Constraints:
 - Evidence grade minimum: B
-- Output: Suno-ready lyrics in the base grammar of `suno guide songwriting`
+- Output: Suno-ready lyrics in the base grammar of `gsuno guide songwriting`
 - Prime-Stack Map required
 - If you cut a briefed prime for craft reasons, note the cut
 
@@ -732,7 +732,7 @@ Track these columns across every song; after ~30 songs across domains the datase
 
 Every song produces, in one response:
 
-1. **Suno-ready lyrics** — plain text, using the base grammar in `suno guide songwriting` (section tags, meta-tags, vocal direction).
+1. **Suno-ready lyrics** — plain text, using the base grammar in `gsuno guide songwriting` (section tags, meta-tags, vocal direction).
 2. **Prime-Stack Map** — a table mapping each embedded line → primes fired → evidence grade → citation.
 3. **Selection rationale** — why these primes, why this subtlety, which primes were rejected and why.
 4. **Predicted effect** — detection probability, attitude-shift direction, expected recall lift, with honest confidence intervals from the calibrated priors.
@@ -744,19 +744,19 @@ In Mode B, also surface the candidate drafts and the Selection Memo (which line 
 
 ## Generate it
 
-The lyric block is plain text; hand it to the suno CLI. Style tags carry the genre/mood; the lyric block goes to `--lyrics-file`.
+The lyric block is plain text; hand it to the gsuno CLI. Style tags carry the genre/mood; the lyric block goes to `--lyrics-file`.
 
 **Priming default:** chill lounge, ~72 BPM (parasympathetic state, lower critical evaluation at the bridge). A good default tag string: `chill lounge, downtempo, warm Rhodes, soft brushed drums, 72 BPM, intimate vocal`.
 
 ```bash
 # Draft the lyric block cheaply first (FREE — no credits, no audio):
-suno lyrics --prompt "chill lounge charm song, unhurried, morning light, seeds that paid tenfold"
+gsuno lyrics --prompt "chill lounge charm song, unhurried, morning light, seeds that paid tenfold"
 
 # Or let Suno write the whole thing from a description:
-suno describe --prompt "72 BPM lounge, relaxed-luxury mood, first-person narrator who already made it"
+gsuno describe --prompt "72 BPM lounge, relaxed-luxury mood, first-person narrator who already made it"
 
 # Then generate the audio from your finalized, prime-mapped lyric block:
-suno generate \
+gsuno generate \
   --title "Half Past Gold" \
   --tags "chill lounge, downtempo, warm Rhodes, soft brushed drums, 72 BPM, intimate vocal" \
   --lyrics-file ./half-past-gold.txt \
@@ -768,7 +768,7 @@ suno generate \
 
 `--download` embeds the final lyrics into the MP3.
 
-**Generation controls (discover current syntax with `suno agent-info --command generate`):**
+**Generation controls (discover current syntax with `gsuno agent-info --command generate`):**
 
 | Flag | Purpose |
 |---|---|
@@ -791,4 +791,4 @@ suno generate \
 | `--force` | Bypass the duplicate-run guard |
 | `--allow-placeholders` | Send literal lyric placeholders as written |
 
-**Cost:** Suno currently documents standard v6 as 10 credits for two songs; Max Mode costs more. Use `suno models` and `suno credits` for current account state. `suno lyrics` returns text without audio. Audition one pair before a batch; the retired v4.5-all model is no longer a cheap-draft option.
+**Cost:** Suno currently documents standard v6 as 10 credits for two songs; Max Mode costs more. Use `gsuno models` and `gsuno credits` for current account state. `gsuno lyrics` returns text without audio. Audition one pair before a batch; the retired v4.5-all model is no longer a cheap-draft option.

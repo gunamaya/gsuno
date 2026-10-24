@@ -51,6 +51,7 @@ pub fn config_dir() -> PathBuf {
     if let Some(dir) = env_dir("SUNO_CONFIG_DIR") {
         return dir;
     }
+    // Keep the legacy namespace so existing sessions/config survive the gsuno rename.
     directories::ProjectDirs::from("com", "suno-cli", "suno-cli")
         .map(|d| d.config_dir().to_path_buf())
         .unwrap_or_else(|| PathBuf::from("~/.config/suno-cli"))
@@ -66,6 +67,7 @@ pub fn data_dir() -> PathBuf {
     if let Some(dir) = env_dir("SUNO_DATA_DIR") {
         return dir;
     }
+    // Keep the legacy namespace so existing sessions/config survive the gsuno rename.
     directories::ProjectDirs::from("com", "suno-cli", "suno-cli")
         .map(|d| d.data_dir().to_path_buf())
         .unwrap_or_else(|| PathBuf::from("."))
@@ -115,7 +117,7 @@ impl AppConfig {
                 <crate::cli::ModelVersion as clap::ValueEnum>::from_str(value, true).map_err(
                     |_| {
                         CliError::InvalidInput(format!(
-                            "unknown model '{value}' — see `suno generate --help` for valid --model values"
+                            "unknown model '{value}' — see `gsuno generate --help` for valid --model values"
                         ))
                     },
                 )?;
@@ -167,7 +169,7 @@ impl AppConfig {
         <crate::cli::ModelVersion as clap::ValueEnum>::from_str(&self.default_model, true)
             .map_err(|_| {
                 CliError::Config(format!(
-                    "unknown default_model '{}' — see `suno generate --help` for valid values",
+                    "unknown default_model '{}' — see `gsuno generate --help` for valid values",
                     self.default_model
                 ))
             })?;

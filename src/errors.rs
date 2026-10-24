@@ -11,7 +11,7 @@ pub enum CliError {
     #[error("API error: {message}")]
     Api { code: &'static str, message: String },
 
-    #[error("Authentication required — run `suno auth` first")]
+    #[error("Authentication required — run `gsuno auth` first")]
     AuthMissing,
 
     #[error("JWT expired or rejected by Suno")]
@@ -91,7 +91,7 @@ impl CliError {
     /// Framework exit-code contract: 0 success, 1 transient (retry),
     /// 2 config/auth (fix setup), 3 bad input (fix arguments, don't blind
     /// retry), 4 rate limited. Auth errors are 2 because the fix is a setup
-    /// action (`suno auth --login`), not a retry; not-found is 3 because the
+    /// action (`gsuno auth --login`), not a retry; not-found is 3 because the
     /// fix is a different ID. Code 5 no longer exists (breaking vs 0.5.x).
     pub fn exit_code(&self) -> i32 {
         match self {
@@ -148,21 +148,21 @@ impl CliError {
             Self::Recovery { suggestion, .. } => suggestion,
             Self::Diagnostic { source, .. } => source.suggestion(),
             Self::GenerationPending(_) => {
-                "Resume with `suno status <ids> --wait`; do not submit another generation"
+                "Resume with `gsuno status <ids> --wait`; do not submit another generation"
             }
-            Self::AuthMissing => "Run `suno auth --login` to authenticate",
+            Self::AuthMissing => "Run `gsuno auth --login` to authenticate",
             Self::AuthExpired => {
-                "Run `suno auth --refresh`; if that fails, run `suno auth --login`"
+                "Run `gsuno auth --refresh`; if that fails, run `gsuno auth --login`"
             }
             Self::RateLimited => "Wait 30-60 seconds and retry",
             Self::RateLimitedFor { suggestion, .. } => suggestion,
-            Self::Config(_) => "Check `suno doctor` for configuration issues",
-            Self::InvalidInput(_) => "Check arguments with `suno <command> --help`",
-            Self::NotFound(_) => "Verify the ID exists with `suno list` or `suno search`",
+            Self::Config(_) => "Check `gsuno doctor` for configuration issues",
+            Self::InvalidInput(_) => "Check arguments with `gsuno <command> --help`",
+            Self::NotFound(_) => "Verify the ID exists with `gsuno list` or `gsuno search`",
             Self::Download(_) => {
-                "Check that the clip has finished generating with `suno status <id>`"
+                "Check that the clip has finished generating with `gsuno status <id>`"
             }
-            Self::GenerationFailed(_) => "Check `suno credits` for remaining balance",
+            Self::GenerationFailed(_) => "Check `gsuno credits` for remaining balance",
             Self::Api {
                 code: "captcha_required",
                 ..
@@ -170,12 +170,12 @@ impl CliError {
                 "Supply --token, or omit --no-browser to allow the captcha solver (use --headless for invisible Chrome)"
             }
             Self::Api { code, .. } if *code == "schema_drift" => {
-                "Suno changed their API or rolled out hCaptcha enforcement. Try (1) `suno auth --refresh` to mint a fresh JWT, (2) `suno update` to pull the latest fix, (3) supply an hCaptcha solution via `--token <solved>`, or (4) see https://github.com/paperfoot/suno-cli/issues for the current status"
+                "Suno changed their API or rolled out hCaptcha enforcement. Try (1) `gsuno auth --refresh` to mint a fresh JWT, (2) `gsuno update` to pull the latest fix, (3) supply an hCaptcha solution via `--token <solved>`, or (4) see https://github.com/anggi-susanto/suno-cli/issues for the current status"
             }
             Self::Api { .. } | Self::Http(_) => "Check your network connection and retry",
             Self::Io(_) => "Check file permissions and disk space",
             Self::Json(_) => {
-                "This may indicate an API change — run `suno update` for the latest fix"
+                "This may indicate an API change — run `gsuno update` for the latest fix"
             }
             Self::Update(_) => {
                 "Check your network connection or download the binary directly from GitHub Releases"

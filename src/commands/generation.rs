@@ -15,7 +15,7 @@ pub(crate) fn generation_recovery(error: CliError, ids: &[String]) -> CliError {
             details: serde_json::json!({"ids":ids,"next_action":{"argv":crate::commands::jobs::resume_argv(ids)}}),
         }),
         suggestion: format!(
-            "Resume the existing clips with `suno status {} --wait --download ./songs/`; saved IDs are in `suno jobs`. Do not submit another generation.",
+            "Resume the existing clips with `gsuno status {} --wait --download ./songs/`; saved IDs are in `gsuno jobs`. Do not submit another generation.",
             ids.join(" ")
         ),
     }

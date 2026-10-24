@@ -1,6 +1,6 @@
 # Directing Suno: sound, performance, and iteration
 
-Checked September 28, 2026. Start with `suno prompt --help`; it builds an offline brief and exposes missing decisions. Its example presets are editable starting points, not tested optimum settings. Run `suno prompt --list-presets` to read them.
+Checked September 28, 2026. Start with `gsuno prompt --help`; it builds an offline brief and exposes missing decisions. Its example presets are editable starting points, not tested optimum settings. Run `gsuno prompt --list-presets` to read them.
 
 ## What Suno documents
 
@@ -62,7 +62,7 @@ These are starting briefs, not recordings with verified outcomes.
 **Comic village song**
 
 ```sh
-suno prompt --preset comic-folk --title 'The Missing Pie' --lyrics-file song.txt
+gsuno prompt --preset comic-folk --title 'The Missing Pie' --lyrics-file song.txt
 ```
 
 The preset specifies an adult rough baritone, dry delivery, a jig pulse, fiddle responses, and hand drum. Override the cast with `--voice` to suit the song. The exclusions discourage a country ballad without suppressing fiddle itself.
@@ -70,7 +70,7 @@ The preset specifies an adult rough baritone, dry delivery, a jig pulse, fiddle 
 **Unaccompanied work song**
 
 ```sh
-suno prompt --preset work-song --title 'Pull Together' --lyrics-file song.txt
+gsuno prompt --preset work-song --title 'Pull Together' --lyrics-file song.txt
 ```
 
 One adult caller and mixed adult unison response, 80 quarter-note BPM, heavy downbeats. The voice is doing physical work; avoid instructions for a polished cathedral choir unless that is intended.
@@ -78,7 +78,7 @@ One adult caller and mixed adult unison response, 80 quarter-note BPM, heavy dow
 **Plain solo lament**
 
 ```sh
-suno prompt --preset solo-lament --voice 'one adult low tenor, chest register' \
+gsuno prompt --preset solo-lament --voice 'one adult low tenor, chest register' \
   --title 'Empty Chair' --lyrics-file song.txt
 ```
 
@@ -87,7 +87,7 @@ A cappella, three stanzas, restrained vibrato, no large pop chorus. The explicit
 **Instrumental electronic track**
 
 ```sh
-suno prompt --genre 'minimal house' --bpm 124 --meter 4/4 --beat-unit quarter \
+gsuno prompt --genre 'minimal house' --bpm 124 --meter 4/4 --beat-unit quarter \
   --groove 'four-on-the-floor, lightly swung hats' --instrumental \
   --instruments 'tight kick, sub bass, syncopated analog synth stabs' \
   --arrangement 'eight-bar intro, stripped break, final groove'
@@ -95,12 +95,12 @@ suno prompt --genre 'minimal house' --bpm 124 --meter 4/4 --beat-unit quarter \
 
 ## Generate, audition, revise
 
-1. Finish lyrics and brief. Inspect `style_prompt`, `negative_tags`, and `missing_directions` from `suno prompt`.
+1. Finish lyrics and brief. Inspect `style_prompt`, `negative_tags`, and `missing_directions` from `gsuno prompt`.
 2. Run its `next_action.preview_argv` to validate the exact request offline. Execute argv as an argument array, without shell interpolation.
 3. Run `next_action.argv` for one pair. Keep that request UUID with the song. Append `--download ./songs/` to save the audio.
 4. Audition both results before producing an album or large batch. Check voice, delivery, pulse, arrangement, words, ending, and unwanted genre drift. State whether these were heard by a human, reviewed by an audio-capable system, or still unchecked. An MP3 decoder only verifies a playable file.
 5. Keep the accepted clip IDs. Change one major cause of failure at a time. A revision needs a new request UUID; a retry of the same submission keeps the existing UUID.
 
-Do not regenerate because a wait timed out. Run `suno jobs`, then `suno status <ids> --wait --download ./songs/`. If a submission outcome is unknown, inspect the library before sending another paid request.
+Do not regenerate because a wait timed out. Run `gsuno jobs`, then `gsuno status <ids> --wait --download ./songs/`. If a submission outcome is unknown, inspect the library before sending another paid request.
 
-Standard v6 generates two songs for 10 credits according to the current FAQ; account access and special inputs may change the cost. Read `suno models` and `suno credits` for current account state.
+Standard v6 generates two songs for 10 credits according to the current FAQ; account access and special inputs may change the cost. Read `gsuno models` and `gsuno credits` for current account state.

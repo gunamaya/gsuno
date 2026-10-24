@@ -1,6 +1,6 @@
 mod common;
 
-use common::suno_in;
+use common::gsuno_in;
 use serde_json::Value;
 
 fn check_report(report: &Value, stage: &str) {
@@ -21,7 +21,7 @@ fn check_report(report: &Value, stage: &str) {
 #[test]
 fn timings_are_opt_in_and_do_not_change_stdout() {
     let home = tempfile::tempdir().unwrap();
-    let plain = suno_in(home.path())
+    let plain = gsuno_in(home.path())
         .args(["jobs", "--json"])
         .output()
         .unwrap();
@@ -31,7 +31,7 @@ fn timings_are_opt_in_and_do_not_change_stdout() {
         vec!["--timings", "jobs", "--json"],
         vec!["jobs", "--timings", "--json", "--quiet"],
     ] {
-        let timed = suno_in(home.path()).args(args).output().unwrap();
+        let timed = gsuno_in(home.path()).args(args).output().unwrap();
         assert!(timed.status.success());
         assert_eq!(timed.stdout, plain.stdout);
         let stderr: Value = serde_json::from_slice(&timed.stderr).unwrap();
@@ -43,11 +43,11 @@ fn timings_are_opt_in_and_do_not_change_stdout() {
 #[test]
 fn early_auth_error_keeps_one_json_envelope_and_exit_code() {
     let home = tempfile::tempdir().unwrap();
-    let plain = suno_in(home.path())
+    let plain = gsuno_in(home.path())
         .args(["credits", "--json"])
         .output()
         .unwrap();
-    let timed = suno_in(home.path())
+    let timed = gsuno_in(home.path())
         .args(["credits", "--json", "--timings"])
         .output()
         .unwrap();
@@ -67,7 +67,7 @@ fn early_auth_error_keeps_one_json_envelope_and_exit_code() {
 #[test]
 fn timings_do_not_record_input_or_paths() {
     let home = tempfile::tempdir().unwrap();
-    let output = suno_in(home.path())
+    let output = gsuno_in(home.path())
         .args([
             "describe",
             "--prompt",

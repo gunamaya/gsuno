@@ -1,17 +1,17 @@
-//! `suno write` end-to-end invariants. The central one: the file named by the
+//! `gsuno write` end-to-end invariants. The central one: the file named by the
 //! emitted generate command exists, is directly consumable by
 //! `generate --lyrics-file`, carries nothing that would be sung as lyrics, and
 //! reflects every selected control.
 //!
-//! `write` reads neither config nor auth nor network, so the scrubbed `suno()`
+//! `write` reads neither config nor auth nor network, so the scrubbed `gsuno()`
 //! helper is enough; only the placeholder preflight needs an isolated home.
 
 mod common;
-use common::{suno, suno_in};
+use common::{gsuno, gsuno_in};
 use tempfile::TempDir;
 
 fn write_json(args: &[&str]) -> serde_json::Value {
-    let out = suno()
+    let out = gsuno()
         .arg("write")
         .args(args)
         .arg("--json")
@@ -144,7 +144,7 @@ fn instrumental_is_coherent() {
 
 #[test]
 fn priming_without_consent_fields_exits_3() {
-    let out = suno()
+    let out = gsuno()
         .args(["write", "--mode", "priming", "--json"])
         .output()
         .unwrap();
@@ -191,7 +191,7 @@ fn generate_refuses_unresolved_scaffold_placeholders() {
     // preflight runs before auth, so this needs no credentials.
     let tmp = TempDir::new().unwrap();
     let song = tmp.path().join("song.txt");
-    suno_in(tmp.path())
+    gsuno_in(tmp.path())
         .args([
             "write",
             "--genre",
@@ -203,7 +203,7 @@ fn generate_refuses_unresolved_scaffold_placeholders() {
         .assert()
         .success();
 
-    let out = suno_in(tmp.path())
+    let out = gsuno_in(tmp.path())
         .args([
             "generate",
             "--title",
@@ -226,7 +226,7 @@ fn generate_refuses_unresolved_scaffold_placeholders() {
 
 #[test]
 fn write_help_states_the_out_and_redirection_contract() {
-    let out = suno().args(["write", "--help"]).output().unwrap();
+    let out = gsuno().args(["write", "--help"]).output().unwrap();
     assert!(out.status.success());
     let help = String::from_utf8_lossy(&out.stdout);
     assert!(help.contains("--out"));

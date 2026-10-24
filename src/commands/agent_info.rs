@@ -2,7 +2,7 @@
 //!
 //! Always raw JSON, never wrapped in the envelope — an agent calling
 //! agent-info is bootstrapping and this IS the schema definition.
-//! Every command key must stay routable (`suno <key> --help` exits 0);
+//! Every command key must stay routable (`gsuno <key> --help` exits 0);
 //! the conformance probe enforces it.
 
 use clap::{Arg, ArgAction, Command, CommandFactory, ValueEnum};
@@ -46,7 +46,7 @@ fn retired_models() -> Vec<Value> {
 }
 
 /// Top-level discovery list for the built-in guides, generated from the
-/// `guide` registry so it can never drift from what `suno guide` serves.
+/// `guide` registry so it can never drift from what `gsuno guide` serves.
 fn guide_map() -> Vec<Value> {
     crate::commands::guide::GUIDES
         .iter()
@@ -175,7 +175,7 @@ fn domain_annotations() -> serde_json::Map<String, Value> {
         (
             "write",
             json!({
-                "description": "Compose a Suno-ready song scaffold from the built-in grammar (Style Prompt + meta-tagged lyric skeleton + Suno Tags + a structured next_action for `suno generate`). Free, no credits used",
+                "description": "Compose a Suno-ready song scaffold from the built-in grammar (Style Prompt + meta-tagged lyric skeleton + Suno Tags + a structured next_action for `gsuno generate`). Free, no credits used",
                 "args": [],
                 "options": [
                     {"name": "--theme", "type": "string", "required": false, "description": "What the song is about (fills the {theme} placeholders)"},
@@ -216,12 +216,12 @@ fn domain_annotations() -> serde_json::Map<String, Value> {
                     "priming": "{target, objective, domain, subtlety, prime_stack_map} (priming mode only)"
                 },
                 "workflow": [
-                    "suno write --genre <g> --theme <t> --out song.txt --json",
+                    "gsuno write --genre <g> --theme <t> --out song.txt --json",
                     "edit song.txt: replace every <...> span; keep [Section] tags; repeat the chorus verbatim",
                     "run data.next_action.argv — renders on the configured default model (v6; standard generation is documented as 10 credits for two songs)",
                     "`generate` and `extend` exit 3 if any <...> placeholder survives (unless --allow-placeholders is explicit), so --force stays limited to lock recovery"
                 ],
-                "raw_output": "human mode without --out: the lyric skeleton ONLY on stdout (safe to redirect or paste as a lyrics input); title, style prompt, suno tags and handoff on stderr. With --out: nothing on stdout, the file holds lyrics only. JSON envelope when piped or --json"
+                "raw_output": "human mode without --out: the lyric skeleton ONLY on stdout (safe to redirect or paste as a lyrics input); title, style prompt, gsuno tags and handoff on stderr. With --out: nothing on stdout, the file holds lyrics only. JSON envelope when piped or --json"
             }),
         ),
         (
@@ -338,7 +338,7 @@ fn domain_annotations() -> serde_json::Map<String, Value> {
                 ],
                 "receipt_fields": ["transaction_id", "request_sha256", "updated_at", "state", "ids", "next_action", "path"],
                 "omitted_from_receipts": ["credentials", "lyrics"],
-                "recovery_rule": "If IDs exist, run the receipt's next_action (`suno status <ids> --wait`). If submission state is unknown, inspect `suno jobs` and the library; never resubmit the unknown request."
+                "recovery_rule": "If IDs exist, run the receipt's next_action (`gsuno status <ids> --wait`). If submission state is unknown, inspect `gsuno jobs` and the library; never resubmit the unknown request."
             }),
         ),
         (
@@ -812,17 +812,17 @@ fn base_manifest(commands: Map<String, Value>, global_flags: Map<String, Value>)
         .to_string();
 
     let info = json!({
-        "name": "suno",
+        "name": "gsuno",
         "version": env!("CARGO_PKG_VERSION"),
         "description": "Write, generate, and manage Suno music — a native song composer (`write`), v6 generation, resumable jobs, signed downloads, voice personas, covers, remasters, and built-in songwriting guides",
         "commands": commands,
-        // Built-in songwriting knowledge, discoverable via `suno guide <name>`.
+        // Built-in songwriting knowledge, discoverable via `gsuno guide <name>`.
         "guides": guide_map(),
         "global_flags": global_flags,
         "exit_codes": {
             "0": "Success",
             "1": "Transient error (network, API, download) — retry with backoff",
-            "2": "Configuration or auth error — run `suno doctor`; for auth run `suno auth --login`",
+            "2": "Configuration or auth error — run `gsuno doctor`; for auth run `gsuno auth --login`",
             "3": "Bad input (arguments, unknown ID, moderation rejection, duplicate run) — fix before retrying",
             "4": "Rate limited — wait 30-60s and retry",
         },
@@ -891,8 +891,8 @@ fn base_manifest(commands: Map<String, Value>, global_flags: Map<String, Value>)
         "workflows": {
             "generation_recovery": {
                 "steps": [
-                    "Run `suno jobs` to inspect durable receipts and recover saved clip IDs.",
-                    "Run `suno status <id>... --wait --download DIR` to resume waiting and download completed clips.",
+                    "Run `gsuno jobs` to inspect durable receipts and recover saved clip IDs.",
+                    "Run `gsuno status <id>... --wait --download DIR` to resume waiting and download completed clips.",
                     "If a submission is uncertain and no IDs were saved, inspect the receipt and library; never resubmit the unknown request."
                 ],
                 "receipts": "Contain transaction state, IDs, and next_action; credentials and lyric payloads are omitted.",
@@ -902,7 +902,7 @@ fn base_manifest(commands: Map<String, Value>, global_flags: Map<String, Value>)
         },
         "auth_path": auth_path,
         "auth": {
-            "recommended": "suno auth --login",
+            "recommended": "gsuno auth --login",
             "methods": [
                 "browser_cookie_extract",
                 "full_cookie_header",
@@ -910,7 +910,7 @@ fn base_manifest(commands: Map<String, Value>, global_flags: Map<String, Value>)
                 "direct_jwt",
                 "stored_clerk_refresh",
             ],
-            "logout": "suno auth --logout",
+            "logout": "gsuno auth --logout",
             "generation_captcha": "Generation preflights /api/c/check and skips the solver when the account is not captcha-gated. When gated, provider 1 uses hCaptcha and provider 2 uses Turnstile; browser-backed solving runs automatically; --headless restricts it to invisible Chrome. --no-browser forbids browser use and returns captcha_required. Use --no-captcha only with a valid --token or for deliberate API tests.",
             "browser_policy": "--headless permits invisible Chrome and never shows a headed window. --no-browser forbids browser auth extraction and captcha solving; stored credentials and --cookie-stdin/--jwt-stdin still work.",
         },

@@ -10,37 +10,37 @@ Which creation command:
   lyrics    Lyrics text only, no audio (free)
 
 Tips:
-  • First run: `suno auth --login`, then `suno doctor` to verify the setup
+  • First run: `gsuno auth --login`, then `gsuno doctor` to verify the setup
   • Output is a JSON envelope automatically when piped; force with --json
-  • `suno write` and `suno lyrics` are free; standard v6 generation is documented as 10 credits for two songs
+  • `gsuno write` and `gsuno lyrics` are free; standard v6 generation is documented as 10 credits for two songs
   • Exit codes: 0 ok, 1 transient (retry), 2 config/auth, 3 bad input, 4 rate limited
-  • Config: `suno config path` shows the file; SUNO_* env vars override it
-  • Full machine-readable manifest: `suno agent-info | jq`
+  • Config: `gsuno config path` shows the file; SUNO_* env vars override it
+  • Full machine-readable manifest: `gsuno agent-info | jq`
 
 Examples:
-  suno write --genre \"indie rock\" --theme \"late-night city drives\" --vocal male --out song.txt
+  gsuno write --genre \"indie rock\" --theme \"late-night city drives\" --vocal male --out song.txt
   # fill the <...> lyric slots in song.txt, then run the generate command `write` printed:
-  suno generate --title \"Night Drive\" --tags \"Indie rock, jangly guitars, warm male vocals, 110 BPM\" --lyrics-file song.txt --wait --download ./songs/
+  gsuno generate --title \"Night Drive\" --tags \"Indie rock, jangly guitars, warm male vocals, 110 BPM\" --lyrics-file song.txt --wait --download ./songs/
     The full flow: compose, fill, render, download (lyrics embedded in the MP3)
 
-  suno describe --prompt \"a chill lo-fi track about rainy mornings\" --wait --download ./
+  gsuno describe --prompt \"a chill lo-fi track about rainy mornings\" --wait --download ./
     Let Suno write the lyrics from a description
 
-  suno list | jq -r '.data.clips[].id'
+  gsuno list | jq -r '.data.clips[].id'
     List your library as JSON and extract clip IDs
 
-  suno timed-lyrics <clip_id> --lrc > song.lrc
+  gsuno timed-lyrics <clip_id> --lrc > song.lrc
     Separate Suno API request for LRC (raw even when piped); downloads do not create .lrc files
 
-  suno generate --title \"Example\" --tags \"piano\" --lyrics-file song.txt --wait --download ./songs/ --source remote-pool
+  gsuno generate --title \"Example\" --tags \"piano\" --lyrics-file song.txt --wait --download ./songs/ --source remote-pool
     Create → wait → download via the configured local worker pool (explicit opt-in)
 
-  suno cover <clip_id> --tags \"jazz, smooth piano\" --wait
+  gsuno cover <clip_id> --tags \"jazz, smooth piano\" --wait
     Re-imagine an existing clip in a new style";
 
 #[derive(Parser)]
 #[command(
-    name = "suno",
+    name = "gsuno",
     version,
     about = "Write, generate, and manage Suno music — v6 support",
     after_long_help = HELP_FOOTER
@@ -130,7 +130,7 @@ pub enum Commands {
     /// Download audio/video for clip(s)
     #[command(
         visible_alias = "dl",
-        after_long_help = "Remote pool (explicit opt-in):\n  suno download CLIP_UUID --source remote-pool --format wav --output ./songs/\n  suno status CLIP_UUID --wait --download ./songs/ --source remote-pool\nRequires a compatible HTTPS pool or updated local service and an authorized browser worker.\nExport SUNO_REMOTE_POOL_URL=https://gsunopool.gunamaya.id and SUNO_REMOTE_POOL_TOKEN_FILE=/path/to/token; no .env autoload.\nHTTP is local numeric loopback only; HTTPS verifies certificates. Redirects/proxies disabled.\nRemote pool supports MP3/WAV only; no automatic fallback or .lrc sidecars.\nFetch LRC separately via Suno API: suno timed-lyrics CLIP_UUID --lrc > song.lrc"
+        after_long_help = "Remote pool (explicit opt-in):\n  gsuno download CLIP_UUID --source remote-pool --format wav --output ./songs/\n  gsuno status CLIP_UUID --wait --download ./songs/ --source remote-pool\nRequires a compatible HTTPS pool or updated local service and an authorized browser worker.\nExport SUNO_REMOTE_POOL_URL=https://gsunopool.gunamaya.id and SUNO_REMOTE_POOL_TOKEN_FILE=/path/to/token; no .env autoload.\nHTTP is local numeric loopback only; HTTPS verifies certificates. Redirects/proxies disabled.\nRemote pool supports MP3/WAV only; no automatic fallback or .lrc sidecars.\nFetch LRC separately via Suno API: gsuno timed-lyrics CLIP_UUID --lrc > song.lrc"
     )]
     Download(DownloadArgs),
 
@@ -146,7 +146,7 @@ pub enum Commands {
 
     /// Fetch word-level timestamped lyrics via Suno API (separate from downloads)
     #[command(
-        after_long_help = "Export LRC separately: suno timed-lyrics CLIP_UUID --lrc > song.lrc\nUses Suno API authentication, not the remote worker pool. Downloads do not\nautomatically create LRC files. Instrumentals/unavailable alignment may be empty."
+        after_long_help = "Export LRC separately: gsuno timed-lyrics CLIP_UUID --lrc > song.lrc\nUses Suno API authentication, not the remote worker pool. Downloads do not\nautomatically create LRC files. Instrumentals/unavailable alignment may be empty."
     )]
     TimedLyrics(TimedLyricsArgs),
 
@@ -192,10 +192,10 @@ pub enum Commands {
 
 #[derive(clap::Args)]
 #[command(after_long_help = "Examples:
-  suno prompt --preset comic-folk --title 'The Missing Pie' --lyrics-file song.txt
-  suno prompt --genre 'chamber folk' --bpm 88 --meter 6/8 --beat-unit dotted-quarter --voice 'adult low alto' --delivery 'dry, deadpan, clipped consonants' --instruments 'bowed fiddle and hand drum'
-  suno prompt --list-presets
-Read `suno guide prompting` for source-backed advice, original examples, and audition checks. Missing directions are reported, never silently filled. Musical directions guide the model; they do not guarantee measured BPM, key, or casting.")]
+  gsuno prompt --preset comic-folk --title 'The Missing Pie' --lyrics-file song.txt
+  gsuno prompt --genre 'chamber folk' --bpm 88 --meter 6/8 --beat-unit dotted-quarter --voice 'adult low alto' --delivery 'dry, deadpan, clipped consonants' --instruments 'bowed fiddle and hand drum'
+  gsuno prompt --list-presets
+Read `gsuno guide prompting` for source-backed advice, original examples, and audition checks. Missing directions are reported, never silently filled. Musical directions guide the model; they do not guarantee measured BPM, key, or casting.")]
 pub struct PromptArgs {
     /// Show the original example presets and their full directions
     #[arg(long)]
@@ -273,31 +273,31 @@ pub struct GuideArgs {
     pub name: Option<String>,
 }
 
-// `suno write` help. Agents read --help to learn the command; keep it concrete.
+// `gsuno write` help. Agents read --help to learn the command; keep it concrete.
 const WRITE_HELP: &str = "\
 Tips:
   • --out FILE is the way to get an editable lyrics file: it holds the lyric block ONLY,
-    so it feeds `suno generate --lyrics-file` directly. Title/style/tags go to stderr and JSON
-  • Shell redirection (`suno write > song.txt`) receives the JSON envelope, not lyrics —
+    so it feeds `gsuno generate --lyrics-file` directly. Title/style/tags go to stderr and JSON
+  • Shell redirection (`gsuno write > song.txt`) receives the JSON envelope, not lyrics —
     output is a JSON envelope whenever stdout is not a terminal. Use --out for the lyrics
   • --project-out FILE writes the full human document (title + style prompt + tags + artefact)
-  • Fill the <...> placeholders before generating; `suno generate` rejects unresolved ones
+  • Fill the <...> placeholders before generating; `gsuno generate` rejects unresolved ones
   • Genres are fuzzy/case-insensitive; an unknown genre becomes a raw style tag (never fails)
   • --viral adds earworm/hook meta-tags; --instrumental drops all vocals and lyric slots and
     emits a generate command with --instrumental
-  • --mode priming requires --target, --objective and --domain (see `suno guide priming`)
+  • --mode priming requires --target, --objective and --domain (see `gsuno guide priming`)
 
 Examples:
-  suno write --theme \"late-night coding\" --genre indie-rock --vocal male --out song.txt
+  gsuno write --theme \"late-night coding\" --genre indie-rock --vocal male --out song.txt
     Scaffold to song.txt; fill the <...> slots, then run the printed generate command
 
-  suno write --theme \"summer love\" --genre pop --viral --title \"Golden Hour\" --out song.txt
+  gsuno write --theme \"summer love\" --genre pop --viral --title \"Golden Hour\" --out song.txt
     A pop song with earworm hook tags baked into the style prompt
 
-  suno write --genre lo-fi --instrumental --out beat.txt
+  gsuno write --genre lo-fi --instrumental --out beat.txt
     Instrumental lo-fi scaffold — no lyric slots, generatable as written
 
-  suno write --mode priming --domain investment --target \"batch: seed investors\" \\
+  gsuno write --mode priming --domain investment --target \"batch: seed investors\" \\
       --objective \"increase recall of fund X\" --subtlety medium --out song.txt
     Priming research scaffold (chill lounge, 72 BPM) with a Prime-Stack Map template";
 
@@ -365,7 +365,7 @@ pub struct WriteArgs {
     #[arg(long)]
     pub project_out: Option<String>,
 
-    /// Download directory baked into the emitted `suno generate` command
+    /// Download directory baked into the emitted `gsuno generate` command
     #[arg(long, default_value = "./")]
     pub download: String,
 }

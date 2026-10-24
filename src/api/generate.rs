@@ -88,7 +88,7 @@ impl SunoClient {
                 Err(CliError::Recovery {
                     source: Box::new(e),
                     suggestion: format!(
-                        "Inspect `suno jobs` and `suno list` before resubmitting. Receipt: {}",
+                        "Inspect `gsuno jobs` and `gsuno list` before resubmitting. Receipt: {}",
                         receipt.display()
                     ),
                 })

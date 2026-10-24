@@ -19,9 +19,9 @@ use std::time::{Duration, Instant};
 use crate::errors::CliError;
 use crate::output::OutputFormat;
 
-const BREW_FORMULA: &str = "paperfoot/tap/suno";
-const RELEASES_URL: &str = "https://github.com/paperfoot/suno-cli/releases";
-const LATEST_RELEASE_API: &str = "https://api.github.com/repos/paperfoot/suno-cli/releases/latest";
+const RELEASES_URL: &str = "https://github.com/anggi-susanto/suno-cli/releases";
+const LATEST_RELEASE_API: &str =
+    "https://api.github.com/repos/anggi-susanto/suno-cli/releases/latest";
 const MAX_ARCHIVE_BYTES: u64 = 64 * 1024 * 1024;
 const MAX_METADATA_BYTES: u64 = 1024 * 1024;
 const CONNECT_TIMEOUT: Duration = Duration::from_secs(10);
@@ -68,8 +68,8 @@ impl InstallSource {
 
     fn upgrade_command(self) -> Option<String> {
         match self {
-            Self::Homebrew => Some(format!("brew upgrade {BREW_FORMULA}")),
-            Self::Cargo => Some("cargo install --locked --force suno".to_string()),
+            Self::Homebrew => None,
+            Self::Cargo => Some("cargo install --locked --force gsuno".to_string()),
             Self::Standalone | Self::Unknown => None,
         }
     }
@@ -145,9 +145,9 @@ fn detect_install_source() -> Result<InstallSource, CliError> {
         return Ok(InstallSource::Unknown);
     }
     let known_standalone = [
-        Some(PathBuf::from("/usr/local/bin/suno")),
-        std::env::var_os("HOME").map(|h| PathBuf::from(h).join(".local/bin/suno")),
-        std::env::var_os("HOME").map(|h| PathBuf::from(h).join("bin/suno")),
+        Some(PathBuf::from("/usr/local/bin/gsuno")),
+        std::env::var_os("HOME").map(|h| PathBuf::from(h).join(".local/bin/gsuno")),
+        std::env::var_os("HOME").map(|h| PathBuf::from(h).join("bin/gsuno")),
     ];
     if known_standalone
         .into_iter()
@@ -173,7 +173,7 @@ fn http_client() -> Result<Client, CliError> {
                 attempt.follow()
             }
         }))
-        .user_agent(format!("suno/{} updater", env!("CARGO_PKG_VERSION")))
+        .user_agent(format!("gsuno/{} updater", env!("CARGO_PKG_VERSION")))
         .build()
         .map_err(|e| CliError::Update(format!("could not create update client: {e}")))
 }
@@ -239,23 +239,23 @@ fn parse_release(bytes: &[u8]) -> Result<GithubRelease, CliError> {
 fn platform_asset() -> Option<PlatformAsset> {
     let (target, kind, executable_name) = if cfg!(all(target_os = "macos", target_arch = "x86_64"))
     {
-        ("x86_64-apple-darwin", ArchiveKind::TarGz, "suno")
+        ("x86_64-apple-darwin", ArchiveKind::TarGz, "gsuno")
     } else if cfg!(all(target_os = "macos", target_arch = "aarch64")) {
-        ("aarch64-apple-darwin", ArchiveKind::TarGz, "suno")
+        ("aarch64-apple-darwin", ArchiveKind::TarGz, "gsuno")
     } else if cfg!(all(
         target_os = "linux",
         target_arch = "x86_64",
         target_env = "gnu"
     )) {
-        ("x86_64-unknown-linux-gnu", ArchiveKind::TarGz, "suno")
+        ("x86_64-unknown-linux-gnu", ArchiveKind::TarGz, "gsuno")
     } else if cfg!(all(
         target_os = "linux",
         target_arch = "aarch64",
         target_env = "gnu"
     )) {
-        ("aarch64-unknown-linux-gnu", ArchiveKind::TarGz, "suno")
+        ("aarch64-unknown-linux-gnu", ArchiveKind::TarGz, "gsuno")
     } else if cfg!(all(target_os = "windows", target_arch = "x86_64")) {
-        ("x86_64-pc-windows-msvc", ArchiveKind::Zip, "suno.exe")
+        ("x86_64-pc-windows-msvc", ArchiveKind::Zip, "gsuno.exe")
     } else {
         return None;
     };
@@ -265,7 +265,7 @@ fn platform_asset() -> Option<PlatformAsset> {
         ArchiveKind::Zip => "zip",
     };
     Some(PlatformAsset {
-        archive_name: format!("suno-{target}.{extension}"),
+        archive_name: format!("gsuno-{target}.{extension}"),
         executable_name,
         kind,
     })
@@ -607,7 +607,7 @@ fn print_result(result: &UpdateResult, fmt: OutputFormat, quiet: bool) -> Result
                 if let Some(command) = &result.upgrade_command {
                     eprintln!("Update with: {command}");
                 } else if result.update_mode == "self_replace" {
-                    eprintln!("Run `suno update` to install");
+                    eprintln!("Run `gsuno update` to install");
                 } else {
                     eprintln!("See {RELEASES_URL} for installation instructions");
                 }
@@ -615,7 +615,7 @@ fn print_result(result: &UpdateResult, fmt: OutputFormat, quiet: bool) -> Result
             "updated" => {
                 let latest = result.latest_version.as_deref().unwrap_or("unknown");
                 eprintln!("Updated: v{} -> v{latest}", result.current_version);
-                eprintln!("Run `suno skill install` to refresh the agent skill");
+                eprintln!("Run `gsuno skill install` to refresh the agent skill");
             }
             _ => {}
         },
@@ -755,8 +755,8 @@ mod tests {
 
     fn tar_platform() -> PlatformAsset {
         PlatformAsset {
-            archive_name: "suno-test.tar.gz".into(),
-            executable_name: "suno",
+            archive_name: "gsuno-test.tar.gz".into(),
+            executable_name: "gsuno",
             kind: ArchiveKind::TarGz,
         }
     }
@@ -774,18 +774,20 @@ mod tests {
     #[test]
     fn checksum_requires_one_exact_asset_entry() {
         let hash = "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad";
-        assert!(checksum_entry(&format!("{hash}  suno-test.tar.gz\n"), "suno-test.tar.gz").is_ok());
+        assert!(
+            checksum_entry(&format!("{hash}  gsuno-test.tar.gz\n"), "gsuno-test.tar.gz").is_ok()
+        );
         assert!(
             checksum_entry(
-                &format!("{hash}  prefix-suno-test.tar.gz\n"),
-                "suno-test.tar.gz"
+                &format!("{hash}  prefix-gsuno-test.tar.gz\n"),
+                "gsuno-test.tar.gz"
             )
             .is_err()
         );
         assert!(
             checksum_entry(
-                &format!("{hash}  suno-test.tar.gz extra\n"),
-                "suno-test.tar.gz"
+                &format!("{hash}  gsuno-test.tar.gz extra\n"),
+                "gsuno-test.tar.gz"
             )
             .is_err()
         );
@@ -793,18 +795,18 @@ mod tests {
 
     #[test]
     fn archive_path_allows_only_expected_root_file() {
-        assert!(valid_archive_path(Path::new("suno"), "suno"));
-        assert!(!valid_archive_path(Path::new("bin/suno"), "suno"));
-        assert!(!valid_archive_path(Path::new("../suno"), "suno"));
-        assert!(!valid_archive_path(Path::new("suno.exe"), "suno"));
+        assert!(valid_archive_path(Path::new("gsuno"), "gsuno"));
+        assert!(!valid_archive_path(Path::new("bin/gsuno"), "gsuno"));
+        assert!(!valid_archive_path(Path::new("../gsuno"), "gsuno"));
+        assert!(!valid_archive_path(Path::new("gsuno.exe"), "gsuno"));
     }
 
     #[test]
     fn extraction_accepts_single_root_executable() {
         let temp = tempfile::tempdir().unwrap();
-        let destination = temp.path().join("staged-suno");
+        let destination = temp.path().join("staged-gsuno");
         extract_archive(
-            &tar_gz(&[("suno", b"binary")]),
+            &tar_gz(&[("gsuno", b"binary")]),
             &tar_platform(),
             &destination,
         )
@@ -815,10 +817,10 @@ mod tests {
     #[test]
     fn extraction_rejects_unexpected_or_multiple_paths() {
         let temp = tempfile::tempdir().unwrap();
-        let destination = temp.path().join("staged-suno");
+        let destination = temp.path().join("staged-gsuno");
         assert!(
             extract_archive(
-                &tar_gz(&[("bin/suno", b"binary")]),
+                &tar_gz(&[("bin/gsuno", b"binary")]),
                 &tar_platform(),
                 &destination
             )
@@ -826,7 +828,7 @@ mod tests {
         );
         assert!(
             extract_archive(
-                &tar_gz(&[("suno", b"binary"), ("README", b"text")]),
+                &tar_gz(&[("gsuno", b"binary"), ("README", b"text")]),
                 &tar_platform(),
                 &destination
             )
@@ -837,14 +839,16 @@ mod tests {
     #[test]
     fn version_parser_accepts_plain_and_json_usage() {
         let expected = Version::parse("1.2.3").unwrap();
-        assert_eq!(reported_version("suno 1.2.3\n"), Some(expected.clone()));
+        assert_eq!(reported_version("gsuno 1.2.3\n"), Some(expected.clone()));
         assert_eq!(
-            reported_version(r#"{"version":"1","status":"success","data":{"usage":"suno 1.2.3"}}"#),
+            reported_version(
+                r#"{"version":"1","status":"success","data":{"usage":"gsuno 1.2.3"}}"#
+            ),
             Some(expected.clone())
         );
         assert_eq!(reported_version("not-a-version"), None);
-        verify_reported_version("suno 1.2.3", &expected).unwrap();
-        assert!(verify_reported_version("suno 1.2.4", &expected).is_err());
+        verify_reported_version("gsuno 1.2.3", &expected).unwrap();
+        assert!(verify_reported_version("gsuno 1.2.4", &expected).is_err());
         assert!(verify_reported_version("garbage", &expected).is_err());
     }
 }

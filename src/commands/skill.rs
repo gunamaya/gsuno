@@ -1,5 +1,5 @@
 //! Agent-skill management. The skill file is a signpost — trigger phrases in
-//! the frontmatter, a body that points at `suno agent-info` — so capability
+//! the frontmatter, a body that points at `gsuno agent-info` — so capability
 //! detail lives in the binary and the installed copies never drift.
 
 use std::path::PathBuf;
@@ -38,21 +38,21 @@ fn skill_targets() -> Vec<SkillTarget> {
     let mut targets = vec![
         SkillTarget {
             platform: "Claude Code",
-            dir: h.join(".claude/skills/suno"),
+            dir: h.join(".claude/skills/gsuno"),
         },
         SkillTarget {
             platform: "Codex CLI",
-            dir: h.join(".codex/skills/suno"),
+            dir: h.join(".codex/skills/gsuno"),
         },
         SkillTarget {
             platform: "Gemini CLI",
-            dir: h.join(".gemini/skills/suno"),
+            dir: h.join(".gemini/skills/gsuno"),
         },
     ];
     if h.join(".agents/skills").is_dir() {
         targets.push(SkillTarget {
             platform: "Agents",
-            dir: h.join(".agents/skills/suno"),
+            dir: h.join(".agents/skills/gsuno"),
         });
     }
     targets
@@ -152,7 +152,7 @@ pub fn install_to_path(
                 let verb = if already_current {
                     "Already current"
                 } else {
-                    "Installed suno skill to"
+                    "Installed gsuno skill to"
                 };
                 eprintln!("{verb}: {}", dest.display());
             }
@@ -208,7 +208,7 @@ pub fn status(fmt: OutputFormat) -> Result<(), CliError> {
             for r in &results {
                 let state = match (r.installed, r.current) {
                     (true, true) => "current",
-                    (true, false) => "outdated — run `suno skill install`",
+                    (true, false) => "outdated — run `gsuno skill install`",
                     _ => "not installed",
                 };
                 println!("{:<12} {state}", r.platform);

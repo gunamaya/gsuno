@@ -1,12 +1,12 @@
 <div align="center">
 
-# suno
+# gsuno
 
 **Write, generate, resume, and download Suno music from your terminal — v6 support**
 
 <br />
 
-[![Star this repo](https://img.shields.io/github/stars/paperfoot/suno-cli?style=for-the-badge&logo=github&label=%E2%AD%90%20Star%20this%20repo&color=yellow)](https://github.com/paperfoot/suno-cli/stargazers)
+[![Star this repo](https://img.shields.io/github/stars/anggi-susanto/suno-cli?style=for-the-badge&logo=github&label=%E2%AD%90%20Star%20this%20repo&color=yellow)](https://github.com/anggi-susanto/suno-cli/stargazers)
 &nbsp;&nbsp;
 [![Follow @longevityboris](https://img.shields.io/badge/Follow_%40longevityboris-000000?style=for-the-badge&logo=x&logoColor=white)](https://x.com/longevityboris)
 
@@ -16,9 +16,9 @@
 &nbsp;
 [![Rust](https://img.shields.io/badge/Rust-2024-orange?style=for-the-badge&logo=rust)](https://www.rust-lang.org/)
 &nbsp;
-[![crates.io](https://img.shields.io/crates/v/suno?style=for-the-badge)](https://crates.io/crates/suno)
+[![crates.io](https://img.shields.io/crates/v/suno?style=for-the-badge)](https://crates.io/crates/gsuno)
 &nbsp;
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=for-the-badge)](https://github.com/paperfoot/suno-cli/pulls)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=for-the-badge)](https://github.com/anggi-susanto/suno-cli/pulls)
 
 ---
 
@@ -37,9 +37,9 @@ This CLI fixes that. Auto-auth from your browser, every generation parameter exp
 ## Give the agent explicit musical direction
 
 ```bash
-suno guide prompting
-suno prompt --preset comic-folk --title "The Missing Pie" --lyrics-file song.txt
-suno agent-info --command generate
+gsuno guide prompting
+gsuno prompt --preset comic-folk --title "The Missing Pie" --lyrics-file song.txt
+gsuno agent-info --command generate
 ```
 
 `prompt` is offline and free. It assembles BPM, beat unit, meter, groove, voice, delivery, instruments, arrangement, production, and exclusions. Missing choices stay visible. It returns a preview argv and a generation argv with a stable request UUID. Presets are editable examples; they do not impose slider settings. Audition one generated pair before committing to a larger batch.
@@ -48,94 +48,91 @@ The built-in guides link to current Suno sources and distinguish documented cont
 
 ## Install
 
-### Homebrew (macOS/Linux)
+This fork ships as **gsuno** (crate and executable). Replace `suno` with `gsuno` in integration commands. All `SUNO_*` variables, including `SUNO_REMOTE_POOL_URL` and `SUNO_REMOTE_POOL_TOKEN_FILE`, and legacy `suno-cli` config/data paths and `.suno` worker state remain unchanged. No automatic migration is needed. The old `suno` executable and agent skill are not removed; install the new skill with `gsuno skill install` and update callers explicitly.
 
-```bash
-brew tap paperfoot/tap
-brew install suno
-```
+The fork publishes Cargo packages and GitHub release assets; no Homebrew formula is provided.
 
 ### Cargo (any platform)
 
 ```bash
-cargo install suno
+cargo install --locked gsuno
 ```
 
 ### Pre-built binaries
 
-Download from [GitHub Releases](https://github.com/paperfoot/suno-cli/releases) — binaries for macOS (Apple Silicon + Intel), Linux (x86_64 + ARM), and Windows.
+Download from [GitHub Releases](https://github.com/anggi-susanto/suno-cli/releases) — binaries for macOS (Apple Silicon + Intel), Linux (x86_64 + ARM), and Windows.
 
 ### Updating
 
-`suno update` is distribution-aware: it detects how the binary was installed and never overwrites a package-manager-owned install.
+`gsuno update` is distribution-aware: it detects how the binary was installed and never overwrites a package-manager-owned install.
 
 ```bash
-suno update --check    # see what's available (JSON when piped)
-suno update            # standalone installs: self-replace from GitHub Releases
+gsuno update --check    # see what's available (JSON when piped)
+gsuno update            # standalone installs: self-replace from GitHub Releases
                        # brew/cargo installs: prints the right upgrade command instead
 ```
 
-| Install source | What `suno update` does |
+| Install source | What `gsuno update` does |
 |---|---|
-| Homebrew | Never self-replaces — tells you to run `brew upgrade paperfoot/tap/suno` |
-| Cargo | Never self-replaces — tells you to run `cargo install --locked --force suno` |
+| Homebrew | Never self-replaces — leaves management to your package manager (this fork does not ship a Homebrew formula) |
+| Cargo | Never self-replaces — tells you to run `cargo install --locked --force gsuno` |
 | Standalone binary | Downloads the latest GitHub release over HTTPS and swaps it in |
 | Unrecognized | Returns instructions without replacement; latest_version stays null unless --check queried GitHub |
 
 Standalone updates select the exact platform archive, verify its SHA256 against GitHub release metadata or checksums.txt, extract only the expected executable, check its version, then replace the binary. Unknown locations return installation instructions unless explicitly declared standalone with SUNO_INSTALL_SOURCE.
 
-After updating, run `suno skill install` to refresh the agent skill.
+After updating, run `gsuno skill install` to refresh the agent skill.
 
 ## Quick Start
 
 ```bash
 # 1. Authenticate (auto-extracts from Chrome/Arc/Brave/Firefox/Edge)
-suno auth --login
+gsuno auth --login
 
 # 2. Verify the setup end to end (auth, JWT freshness, Chrome, API reach, credits)
-suno doctor
+gsuno doctor
 
 # 3. Check your credits
-suno credits
+gsuno credits
 
 # 4. Write a song — the composer scaffolds it, you fill the <...> lyric slots
-suno write --genre "indie rock" --theme "late-night city drives" --vocal male --out song.txt
+gsuno write --genre "indie rock" --theme "late-night city drives" --vocal male --out song.txt
 
 # 5. Generate the audio from the file you just filled (write prints this exact command)
-suno generate \
+gsuno generate \
   --title "Night Drive" \
   --tags "Indie rock, jangly and nostalgic, 110 BPM, warm male vocals, clean guitars, driving drums" \
   --lyrics-file song.txt \
   --wait --download ./songs/
 
 # 6. Generate with your voice persona
-suno generate \
+gsuno generate \
   --title "My Song" \
   --tags "pop, warm" \
   --persona e483d2f0-50ca-4a09-8a74-b9e074646377 \
   --lyrics "[Verse]\nHello from the CLI"
 
 # 7. Or skip the composer and let Suno write the lyrics from a description
-suno describe --prompt "a chill lo-fi track about rainy mornings" --wait
+gsuno describe --prompt "a chill lo-fi track about rainy mornings" --wait
 ```
 
-Suno documents standard v6 generation as 10 credits for two songs. Max Mode and prompts with many image or video inputs cost more. `suno lyrics` does not render audio. Check `suno credits` and `suno models` for the account's current billing and catalogue.
+Suno documents standard v6 generation as 10 credits for two songs. Max Mode and prompts with many image or video inputs cost more. `gsuno lyrics` does not render audio. Check `gsuno credits` and `gsuno models` for the account's current billing and catalogue.
 
 ## Write a song
 
-`suno write` is the way to compose. It assembles a Suno-ready song scaffold from a genre grammar compiled into the binary — a Style Prompt line, a meta-tagged `[Verse]`/`[Chorus]` skeleton with inline `<...>` lyric placeholders, and a Suno Tags line — then hands you the exact `suno generate` command to run. The grammar is executable, so you never hand-assemble a style prompt: run one command, fill the `<...>` slots, generate.
+`gsuno write` is the way to compose. It assembles a Suno-ready song scaffold from a genre grammar compiled into the binary — a Style Prompt line, a meta-tagged `[Verse]`/`[Chorus]` skeleton with inline `<...>` lyric placeholders, and a Suno Tags line — then hands you the exact `gsuno generate` command to run. The grammar is executable, so you never hand-assemble a style prompt: run one command, fill the `<...>` slots, generate.
 
 ```bash
 # 1. Scaffold the song (free, no credits) — --out writes the lyric block to a file
-suno write --genre "indie rock" --theme "late-night city drives" --vocal male --viral --out song.txt
+gsuno write --genre "indie rock" --theme "late-night city drives" --vocal male --viral --out song.txt
 
 # 2. Fill the <...> lyric lines in song.txt, then run the command `write` printed
-suno generate --title "..." --tags "..." --lyrics-file song.txt --wait --download ./songs/
+gsuno generate --title "..." --tags "..." --lyrics-file song.txt --wait --download ./songs/
 ```
 
-`--out` writes the **lyric block only** — no title, no style prompt, no tag list — so the file feeds `generate --lyrics-file` directly and nothing but lyrics reaches the model. Bare `suno write` at a terminal prints that same lyric block to stdout, so copy-paste is always safe too. The title, Style Prompt and Suno Tags go to stderr (human mode) and into the JSON envelope; `--project-out FILE` additionally saves the full composite document for humans (it must be a different path than `--out`). `suno generate` and `suno extend` refuse lyrics that still contain `<...>` scaffold placeholders — even spans split across lines (exit 3, naming the line numbers) — so an unfilled draft can never burn credits; `--allow-placeholders` sends literal placeholders when explicitly wanted. `--force` bypasses only the duplicate-run guard.
+`--out` writes the **lyric block only** — no title, no style prompt, no tag list — so the file feeds `generate --lyrics-file` directly and nothing but lyrics reaches the model. Bare `gsuno write` at a terminal prints that same lyric block to stdout, so copy-paste is always safe too. The title, Style Prompt and Suno Tags go to stderr (human mode) and into the JSON envelope; `--project-out FILE` additionally saves the full composite document for humans (it must be a different path than `--out`). `gsuno generate` and `gsuno extend` refuse lyrics that still contain `<...>` scaffold placeholders — even spans split across lines (exit 3, naming the line numbers) — so an unfilled draft can never burn credits; `--allow-placeholders` sends literal placeholders when explicitly wanted. `--force` bypasses only the duplicate-run guard.
 
-Note that shell redirection (`suno write > song.txt`) receives the JSON envelope, not lyrics: output is a JSON envelope whenever stdout is not a terminal. `--out` is the way to get an editable lyrics file.
+Note that shell redirection (`gsuno write > song.txt`) receives the JSON envelope, not lyrics: output is a JSON envelope whenever stdout is not a terminal. `--out` is the way to get an editable lyrics file.
 
 Fuzzy genre matching covers ~24 subgenres; an unknown genre is passed through verbatim as a style tag, so `write` never fails on input. Piped or with `--json` you get a `{title, mode, genre, style_prompt, structure, suno_tags, structure_tags, bpm, vocal, theme, viral, instrumental, placeholders_remaining, ready_to_generate, missing_requirements, next_action, written}` envelope. `next_action.argv` is the authoritative handoff — run it as argv, never shell-parse `next_action.command`. It is `null` until `--out` names a real file, and the emitted command omits `--model` so your configured default applies (v6 out of the box).
 
@@ -144,7 +141,7 @@ Fuzzy genre matching covers ~24 subgenres; an unknown genre is passed through ve
 `--mode priming` swaps in a chill-lounge, low-arousal scaffold (72 BPM) and appends a Prime-Stack Map table plus a research-artefact block:
 
 ```bash
-suno write --mode priming \
+gsuno write --mode priming \
   --target "anonymised batch (n=40)" \
   --objective "increase recall of brand X" \
   --domain marketing --subtlety stealth --out song.txt
@@ -152,7 +149,7 @@ suno write --mode priming \
 
 Priming is consent-based, so `--target`, `--objective` and `--domain` are required: an incomplete request exits 3 with the missing flags named, rather than emitting a scaffold and a ready-to-run command. The objective also seeds the song theme. The Prime-Stack Map and research artefact stay out of the lyrics file — they live in the JSON envelope and `--project-out`.
 
-The deep references live in the built-in guides: `suno guide songwriting` for the full grammar, `suno guide priming` for the consent frame, evidence-graded prime library, and quality gates.
+The deep references live in the built-in guides: `gsuno guide songwriting` for the full grammar, `gsuno guide priming` for the consent frame, evidence-graded prime library, and quality gates.
 
 | Flag | What it does | Values |
 |---|---|---|
@@ -176,51 +173,51 @@ The deep references live in the built-in guides: `suno guide songwriting` for th
 ### Create
 
 ```
-suno prompt          Build an explicit musical brief and generation argv offline (free)
-suno write           Compose a Suno-ready song scaffold from the built-in grammar (free)
-suno generate        Custom mode — lyrics + tags + title + sliders + voice persona
-suno describe        Description mode — Suno writes lyrics from your prompt
-suno lyrics          Generate lyrics only (free, no credits)
-suno extend          Continue a clip from a timestamp
-suno concat          Stitch clips into a full song
-suno cover           Create a cover with different style/model
-suno remaster        Remaster with a different model version
-suno stems           Extract vocals and instruments
+gsuno prompt          Build an explicit musical brief and generation argv offline (free)
+gsuno write           Compose a Suno-ready song scaffold from the built-in grammar (free)
+gsuno generate        Custom mode — lyrics + tags + title + sliders + voice persona
+gsuno describe        Description mode — Suno writes lyrics from your prompt
+gsuno lyrics          Generate lyrics only (free, no credits)
+gsuno extend          Continue a clip from a timestamp
+gsuno concat          Stitch clips into a full song
+gsuno cover           Create a cover with different style/model
+gsuno remaster        Remaster with a different model version
+gsuno stems           Extract vocals and instruments
 ```
 
 ### Browse & Inspect
 
 ```
-suno list            List your songs (--cursor for the next page)
-suno search <query>  Search songs by title or tags
-suno info <id>       Detailed view of a single clip; without ID, discovery manifest
-suno persona <id>    View a voice persona
-suno status <ids>    Check or resume existing generation IDs (`--wait`, `--download`)
-suno jobs            List durable generation receipts for recovery
-suno credits         Show balance and plan info
-suno models          List available models with limits
+gsuno list            List your songs (--cursor for the next page)
+gsuno search <query>  Search songs by title or tags
+gsuno info <id>       Detailed view of a single clip; without ID, discovery manifest
+gsuno persona <id>    View a voice persona
+gsuno status <ids>    Check or resume existing generation IDs (`--wait`, `--download`)
+gsuno jobs            List durable generation receipts for recovery
+gsuno credits         Show balance and plan info
+gsuno models          List available models with limits
 ```
 
 ### Manage
 
 ```
-suno download <ids>  Download MP3/WAV/M4A/MP4 through signed preparation APIs
-suno delete <ids>    Move clips to trash (--confirm or -y; --restore undoes it)
-suno set <id>        Update title, lyrics, caption, or remove cover
-suno publish <ids>   Toggle public/private visibility
-suno timed-lyrics    Get word-level timestamped lyrics (--lrc for LRC format)
+gsuno download <ids>  Download MP3/WAV/M4A/MP4 through signed preparation APIs
+gsuno delete <ids>    Move clips to trash (--confirm or -y; --restore undoes it)
+gsuno set <id>        Update title, lyrics, caption, or remove cover
+gsuno publish <ids>   Toggle public/private visibility
+gsuno timed-lyrics    Get word-level timestamped lyrics (--lrc for LRC format)
 ```
 
 ### Config, Auth & Tooling
 
 ```
-suno auth            Set up authentication (--login | --refresh | --cookie-stdin | --jwt-stdin | --logout)
-suno config          show | set | path | check
-suno doctor          Health checks: auth, JWT, Chrome, API reach, credits, captcha state
-suno agent-info      Machine-readable capabilities; --command scopes to a command or group
-suno guide           List built-in songwriting guides, or print one (guides <name>)
-suno skill           install | status — agent skill for Claude Code / Codex / Gemini
-suno update          Distribution-aware update (--check to peek first)
+gsuno auth            Set up authentication (--login | --refresh | --cookie-stdin | --jwt-stdin | --logout)
+gsuno config          show | set | path | check
+gsuno doctor          Health checks: auth, JWT, Chrome, API reach, credits, captcha state
+gsuno agent-info      Machine-readable capabilities; --command scopes to a command or group
+gsuno guide           List built-in songwriting guides, or print one (guides <name>)
+gsuno skill           install | status — agent skill for Claude Code / Codex / Gemini
+gsuno update          Distribution-aware update (--check to peek first)
 ```
 
 ## Guides
@@ -228,10 +225,10 @@ suno update          Distribution-aware update (--check to peek first)
 The CLI ships its songwriting knowledge as built-in guides — a single source of truth compiled into the binary, so what agents read never drifts from the tool.
 
 ```bash
-suno guide                  # list every guide (name, aliases, description)
-suno guide prompting        # BPM, casting, performance, exclusions, and examples
-suno guide songwriting      # raw Markdown at a terminal, JSON when piped
-suno guide priming          # `prime` aliases priming; `grammar` aliases songwriting
+gsuno guide                  # list every guide (name, aliases, description)
+gsuno guide prompting        # BPM, casting, performance, exclusions, and examples
+gsuno guide songwriting      # raw Markdown at a terminal, JSON when piped
+gsuno guide priming          # `prime` aliases priming; `grammar` aliases songwriting
 ```
 
 | Guide | What it covers |
@@ -243,32 +240,32 @@ suno guide priming          # `prime` aliases priming; `grammar` aliases songwri
 Write, then generate — the guide's output maps straight onto the flags:
 
 ```bash
-suno guide songwriting | jq -r .data.content > song.md  # export Markdown, then draft song.txt
-suno generate --title "Weekend Code" \
+gsuno guide songwriting | jq -r .data.content > song.md  # export Markdown, then draft song.txt
+gsuno generate --title "Weekend Code" \
   --tags "indie rock, upbeat, male vocals" \
   --lyrics-file song.txt --wait --download ./songs/
 ```
 
-Piped or `--json`, `suno guide <name>` returns a `{name, content}` envelope; the bare `suno guide` list returns an array of `{name, aliases, description}`.
+Piped or `--json`, `gsuno guide <name>` returns a `{name, content}` envelope; the bare `gsuno guide` list returns an array of `{name, aliases, description}`.
 
 ## Features
 
 ### Authentication
 
 ```bash
-suno auth --login    # Extracts session from your browser automatically
+gsuno auth --login    # Extracts session from your browser automatically
 ```
 
 Reads the Clerk auth cookie from Chrome, Arc, Brave, Firefox, or Edge. Exchanges it for a JWT via Clerk token exchange, stores the refreshable session in a `0600` local auth file, and refreshes stale JWTs automatically when the underlying browser session is still valid.
 
 Auth methods (in order of convenience):
-1. `suno auth --login` — automatic browser extraction (recommended)
-2. `printf '%s' "$COOKIE" | suno auth --cookie-stdin` — secret-safe input for a raw `__client` value or full Cookie header
-3. `printf '%s' "$JWT" | suno auth --jwt-stdin` — direct short-lived JWT without putting it in process arguments
-4. `suno auth --cookie <cookie>` or `suno auth --jwt <token>` — compatible argument forms
-5. `suno auth --refresh` — force a fresh JWT from the stored Clerk session
+1. `gsuno auth --login` — automatic browser extraction (recommended)
+2. `printf '%s' "$COOKIE" | gsuno auth --cookie-stdin` — secret-safe input for a raw `__client` value or full Cookie header
+3. `printf '%s' "$JWT" | gsuno auth --jwt-stdin` — direct short-lived JWT without putting it in process arguments
+4. `gsuno auth --cookie <cookie>` or `gsuno auth --jwt <token>` — compatible argument forms
+5. `gsuno auth --refresh` — force a fresh JWT from the stored Clerk session
 
-`suno auth` with no flags checks the existing session, or starts browser login if no auth is configured. `suno auth --logout` removes stored credentials.
+`gsuno auth` with no flags checks the existing session, or starts browser login if no auth is configured. `gsuno auth --logout` removes stored credentials.
 
 ### Generation Parameters
 
@@ -304,8 +301,8 @@ Before generate/describe/extend/cover/remaster, the CLI asks `/api/c/check` whet
 Examples:
 
 ```bash
-suno --headless generate --title "Night Drive" --tags "indie rock" --lyrics-file song.txt
-suno --no-browser generate --title "Night Drive" --tags "indie rock" --lyrics-file song.txt
+gsuno --headless generate --title "Night Drive" --tags "indie rock" --lyrics-file song.txt
+gsuno --no-browser generate --title "Night Drive" --tags "indie rock" --lyrics-file song.txt
 ```
 
 ### Timing diagnostics
@@ -315,7 +312,7 @@ retry, or generation behavior:
 
 ```bash
 # Offline: verify reporting without an account or browser
-suno jobs --json --timings > jobs.json 2> timings.json
+gsuno jobs --json --timings > jobs.json 2> timings.json
 # Add --timings to your next intended command to measure its actual path
 ```
 
@@ -353,13 +350,13 @@ Generate songs using your own voice. Create a voice in Suno's web UI, then use t
 
 ```bash
 # View persona details
-suno persona <persona_id>
+gsuno persona <persona_id>
 
 # Generate with your voice
-suno generate --persona <persona_id> --title "My Song" --tags "pop" --lyrics "[Verse]\nHello world"
+gsuno generate --persona <persona_id> --title "My Song" --tags "pop" --lyrics "[Verse]\nHello world"
 
 # Works with describe mode too
-suno describe --persona <persona_id> --prompt "a warm ballad about starlight"
+gsuno describe --persona <persona_id> --prompt "a warm ballad about starlight"
 ```
 
 ### Covers & Remasters
@@ -368,10 +365,10 @@ Create covers with different styles or remaster clips with newer models:
 
 ```bash
 # Cover with different style tags
-suno cover <clip_id> --tags "jazz, smooth piano" --model v6 --wait
+gsuno cover <clip_id> --tags "jazz, smooth piano" --model v6 --wait
 
 # Remaster an old clip with the latest model
-suno remaster <clip_id> --model v6 --wait --download ./remastered/
+gsuno remaster <clip_id> --model v6 --wait --download ./remastered/
 ```
 
 Both route through Suno's unified web generation endpoint (`/api/generate/v2-web/`).
@@ -380,23 +377,23 @@ Both route through Suno's unified web generation endpoint (`/api/generate/v2-web
 
 ```bash
 # Full details for any clip
-suno info <clip_id>
+gsuno info <clip_id>
 
 # JSON for scripting
-suno info <clip_id> --json | jq '.data.audio_url'
+gsuno info <clip_id> --json | jq '.data.audio_url'
 ```
 
 ### Edit & Manage
 
 ```bash
 # Update title and lyrics on an existing clip
-suno set <clip_id> --title "New Title" --lyrics-file updated.txt
+gsuno set <clip_id> --title "New Title" --lyrics-file updated.txt
 
 # Make clips public
-suno publish <clip_id_1> <clip_id_2>
+gsuno publish <clip_id_1> <clip_id_2>
 
 # Get timed lyrics in LRC format
-suno timed-lyrics <clip_id> --lrc > song.lrc
+gsuno timed-lyrics <clip_id> --lrc > song.lrc
 ```
 
 ### Resumable generation
@@ -404,10 +401,10 @@ suno timed-lyrics <clip_id> --lrc > song.lrc
 Use a UUID with `generate` or `describe` when an agent may retry after a timeout:
 
 ```bash
-suno generate --request-id 9b2d06c7-3899-4471-a596-1b1df34b11f1 \
+gsuno generate --request-id 9b2d06c7-3899-4471-a596-1b1df34b11f1 \
   --title "Night Drive" --tags "indie rock" --lyrics-file song.txt
-suno jobs
-suno status <clip_id_1> <clip_id_2> --wait --download ./songs/
+gsuno jobs
+gsuno status <clip_id_1> <clip_id_2> --wait --download ./songs/
 ```
 
 The CLI writes a durable receipt before submission. Reusing a request ID with the same payload returns its saved clip IDs; a changed payload or an outcome-unknown receipt is rejected rather than submitted again. Receipts contain the payload hash, state, IDs, and recovery action. They omit credentials, tokens, and lyrics. `--download` implies `--wait`, and completed clips returned by `generate`, `describe`, `cover`, `remaster`, or `status` include `local_path` after download.
@@ -417,10 +414,10 @@ The CLI writes a durable receipt before submission. Reusing a request ID with th
 Downloads use Suno's signed preparation APIs by default:
 
 ```bash
-suno download <id1> <id2> --format mp3 --source auto --output ./songs/
-suno download <id> --format wav --source studio --output ./exports/
-suno download <id> --format m4a --source library --output ./songs/
-suno download <id> --format mp4 --source auto --output ./videos/
+gsuno download <id1> <id2> --format mp3 --source auto --output ./songs/
+gsuno download <id> --format wav --source studio --output ./exports/
+gsuno download <id> --format m4a --source library --output ./songs/
+gsuno download <id> --format mp4 --source auto --output ./videos/
 ```
 
 For MP4, `--source auto` always uses Library without a billing lookup. For audio, it checks the account's `accessible_features` for `studio`. It uses Studio when available; otherwise it uses Library (authorizing once when not already unlocked), then prepares the signed URL. Suno's public bundle directly confirms Library MP3/M4A and the Studio preparation route; Library WAV uses Suno's conversion-and-polling flow. `--video` remains as a compatibility shortcut for MP4. MP3 downloads embed lyrics via ID3 tags:
@@ -429,7 +426,7 @@ For MP4, `--source auto` always uses Library without a billing lookup. For audio
 - **SYLT** (synced word-by-word timestamps) — shown in Apple Music with timing
 
 ```bash
-suno download <id1> <id2> --output ./songs/
+gsuno download <id1> <id2> --output ./songs/
 ```
 
 Files use slug format: `title-slug-clipid8.mp3` — no overwrites when Suno generates 2 variations.
@@ -450,11 +447,11 @@ MP3 and WAV. Unsupported formats are rejected before any provider access.
 
 ```sh
 # Create → wait → download; requires the updated service and an authorized, connected browser worker.
-suno generate --title 'Example' --tags 'piano' --lyrics-file song.txt \
+gsuno generate --title 'Example' --tags 'piano' --lyrics-file song.txt \
   --wait --download ./songs --source remote-pool
 # Resume existing clips; do not submit generation again after a download failure.
-suno status CLIP_UUID --wait --download ./songs --source remote-pool
-suno download CLIP_UUID --format wav --source remote-pool --output ./songs
+gsuno status CLIP_UUID --wait --download ./songs --source remote-pool
+gsuno download CLIP_UUID --format wav --source remote-pool --output ./songs
 ```
 
 Defaults: `SUNO_REMOTE_POOL_URL=http://127.0.0.1:8787` and token file
@@ -466,7 +463,7 @@ For a remote VPS pool, export the configuration before launching the CLI:
 export SUNO_REMOTE_POOL_URL=https://gsunopool.gunamaya.id
 export SUNO_REMOTE_POOL_TOKEN_FILE="$HOME/.suno/gsunopool-token"
 # Provision this file securely with the pool operator's bearer token; do not commit it.
-suno download CLIP_UUID --source remote-pool --format wav --output ./songs
+gsuno download CLIP_UUID --source remote-pool --format wav --output ./songs
 ```
 
 HTTPS origins (including explicitly configured HTTPS localhost/loopback) use normal
@@ -478,9 +475,9 @@ resolved for private-address filtering: trust the configured service and its DNS
 Redirects and environment proxies are disabled, including for HTTPS.
 
 For **yt-to-flowmusic**, export both variables in the environment of the parent
-process so its child `suno` inherits them, and configure its download invocation to
+process so its child `gsuno` inherits them, and configure its download invocation to
 pass `--source remote-pool` (also for creation/status `--download` and recovery).
-The variables do not change the default `auto` source. `suno` does **not** autoload
+The variables do not change the default `auto` source. `gsuno` does **not** autoload
 `.env`; explicitly export variables or use the parent's own environment loader.
 
 Migration from v0.11: local defaults remain unchanged; a remote pool no longer
@@ -504,7 +501,7 @@ unchanged and is not an LRC file. To export available word alignment, use the
 Suno API separately with your normal CLI authentication:
 
 ```sh
-suno timed-lyrics CLIP_UUID --lrc > song.lrc
+gsuno timed-lyrics CLIP_UUID --lrc > song.lrc
 ```
 
 `--lrc` emits raw LRC text even when piped or combined with `--json`; it does not
@@ -525,11 +522,11 @@ Use `status` for existing generated clips rather than submitting generation agai
 
 Current remaster key: v6 = `chirp-halibut`.
 
-Suno retired pre-v6 models on September 9, 2026. Their CLI flag names remain accepted for compatibility, but the CLI checks `/api/billing/info/` before submission and rejects a model that is absent or unavailable. `suno models` is the account-specific authority.
+Suno retired pre-v6 models on September 9, 2026. Their CLI flag names remain accepted for compatibility, but the CLI checks `/api/billing/info/` before submission and rejects a model that is absent or unavailable. `gsuno models` is the account-specific authority.
 
 ### Configuration
 
-Config lives in a TOML file (`suno config path` shows where) and every key is overridable via `SUNO_*` env vars. Precedence: **flag > env > config file > default**.
+Config lives in a TOML file (`gsuno config path` shows where) and every key is overridable via `SUNO_*` env vars. Precedence: **flag > env > config file > default**.
 
 | Key | Env var | Default | What it does |
 |---|---|---|---|
@@ -540,13 +537,13 @@ Config lives in a TOML file (`suno config path` shows where) and every key is ov
 
 `SUNO_CONFIG_DIR` and `SUNO_DATA_DIR` relocate the config/auth directory and
 the state directory (guard locks, captcha Chrome profile) — useful for
-sandboxing or running isolated instances. `suno config path` shows the
+sandboxing or running isolated instances. `gsuno config path` shows the
 resolved location.
 
 ```bash
-suno config show                        # effective merged config
-suno config set default_model v6        # migrate a persisted pre-v6 override
-suno config check                       # validate the file
+gsuno config show                        # effective merged config
+gsuno config set default_model v6        # migrate a persisted pre-v6 override
+gsuno config check                       # validate the file
 ```
 
 ### Agent-Friendly
@@ -557,7 +554,7 @@ Every command supports `--json` for structured output. When stdout is piped, JSO
 |---|---|---|
 | 0 | Success | Continue |
 | 1 | Transient error (network, API, download) | Retry with backoff |
-| 2 | Configuration or auth error | Run `suno doctor`; for auth `suno auth --login` |
+| 2 | Configuration or auth error | Run `gsuno doctor`; for auth `gsuno auth --login` |
 | 3 | Bad input (arguments, unknown ID, moderation rejection, duplicate run) | Fix before retrying |
 | 4 | Rate limited | Wait 30-60s, retry |
 
@@ -572,38 +569,38 @@ Error responses include actionable suggestions:
   "error": {
     "code": "auth_expired",
     "message": "JWT expired or rejected by Suno",
-    "suggestion": "Run `suno auth --refresh`; if that fails, run `suno auth --login`"
+    "suggestion": "Run `gsuno auth --refresh`; if that fails, run `gsuno auth --login`"
   }
 }
 ```
 
 ```bash
 # Pipe-friendly: auto-JSON when piped
-suno list | jq '.data.clips[0].title'
+gsuno list | jq '.data.clips[0].title'
 
 # Paginate with the opaque cursor
-suno list --cursor "$(suno list | jq -r '.data.next_cursor')"
+gsuno list --cursor "$(gsuno list | jq -r '.data.next_cursor')"
 
 # Agent capabilities discovery
-suno agent-info
+gsuno agent-info
 
 # Deterministic exit-code probe (hidden, for conformance tests)
-suno contract 3; echo $?   # 3
+gsuno contract 3; echo $?   # 3
 ```
 
-The vendored framework conformance probe runs in CI: `./conformance/conformance.sh target/release/suno`.
+The vendored framework conformance probe runs in CI: `./conformance/conformance.sh target/release/gsuno`.
 
 ### Install as a Coding Agent Skill
 
-Teach Claude Code, Codex CLI, and Gemini CLI how to use `suno` with one command:
+Teach Claude Code, Codex CLI, and Gemini CLI how to use `gsuno` with one command:
 
 ```bash
-suno skill install   # writes SKILL.md to every detected platform:
-                     #   ~/.claude/skills/suno/  ~/.codex/skills/suno/  ~/.gemini/skills/suno/
-suno skill status    # which platforms have it, and whether it's current
+gsuno skill install   # writes SKILL.md to every detected platform:
+                     #   ~/.claude/skills/gsuno/  ~/.codex/skills/gsuno/  ~/.gemini/skills/gsuno/
+gsuno skill status    # which platforms have it, and whether it's current
 ```
 
-Install is idempotent (`already_current` when nothing changed). The 0.5.x spelling `suno install-skill` still works as a hidden alias. After a CLI update, re-run `suno skill install` so agents see the new surface.
+Install is idempotent (`already_current` when nothing changed). The 0.5.x spelling `gsuno install-skill` still works as a hidden alias. After a CLI update, re-run `gsuno skill install` so agents see the new surface.
 
 ### API surfaces and evidence
 
@@ -647,7 +644,7 @@ Built by [Boris Djordjevic](https://github.com/longevityboris) at [199 Biotechno
 
 **If this saves you time:**
 
-[![Star this repo](https://img.shields.io/github/stars/paperfoot/suno-cli?style=for-the-badge&logo=github&label=%E2%AD%90%20Star%20this%20repo&color=yellow)](https://github.com/paperfoot/suno-cli/stargazers)
+[![Star this repo](https://img.shields.io/github/stars/anggi-susanto/suno-cli?style=for-the-badge&logo=github&label=%E2%AD%90%20Star%20this%20repo&color=yellow)](https://github.com/anggi-susanto/suno-cli/stargazers)
 &nbsp;&nbsp;
 [![Follow @longevityboris](https://img.shields.io/badge/Follow_%40longevityboris-000000?style=for-the-badge&logo=x&logoColor=white)](https://x.com/longevityboris)
 

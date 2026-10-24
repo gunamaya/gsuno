@@ -1,6 +1,6 @@
 # Writing lyrics for Suno
 
-For the Style Prompt, musical direction, BPM, meter, casting, exclusions, slider choices, and examples, read `suno guide prompting`. This guide concerns words and structure.
+For the Style Prompt, musical direction, BPM, meter, casting, exclusions, slider choices, and examples, read `gsuno guide prompting`. This guide concerns words and structure.
 
 ## A practical workflow
 
@@ -8,9 +8,9 @@ For the Style Prompt, musical direction, BPM, meter, casting, exclusions, slider
 2. Write a distinct central phrase or image. Let the verses advance the situation. Repeat a chorus when repetition serves the song; a lament, work song, comic verse, or chant need not use a pop structure.
 3. Speak the lines at the intended pulse. Match stresses to important beats. Shorten an overloaded line or allow more musical space.
 4. Save just the lyrics and section cues in a UTF-8 text file.
-5. Use `suno prompt` to choose the sound, then preview and generate one pair. Audition before batching.
+5. Use `gsuno prompt` to choose the sound, then preview and generate one pair. Audition before batching.
 
-`suno write --genre indie-rock --theme 'a long journey home' --out song.txt` can provide an editable scaffold. Its genre defaults are examples. Replace every `<...>` placeholder and revise any preset direction that does not fit. `--project-out` holds the full planning document separately. Piped stdout is JSON; shell redirection is not a lyrics export.
+`gsuno write --genre indie-rock --theme 'a long journey home' --out song.txt` can provide an editable scaffold. Its genre defaults are examples. Replace every `<...>` placeholder and revise any preset direction that does not fit. `--project-out` holds the full planning document separately. Piped stdout is JSON; shell redirection is not a lyrics export.
 
 ## Lyrics file example
 
@@ -62,14 +62,14 @@ Describe audible behavior. “Sad” alone does not choose between quiet speech,
 ## Render and recover
 
 ```sh
-suno prompt --genre 'indie rock' --bpm 110 --meter 4/4 --beat-unit quarter \
+gsuno prompt --genre 'indie rock' --bpm 110 --meter 4/4 --beat-unit quarter \
   --voice 'adult warm tenor' --delivery 'clear consonants, steady full voice' \
   --instruments 'clean electric guitar, bass, live drums' \
   --title 'Carry the Light' --lyrics-file song.txt
 ```
 
-Execute the returned preview argv before the generation argv. Use v6 or another model currently returned by `suno models`. Earlier generation models have been retired; an old command using v4.5-all is no longer a cheap-draft workflow.
+Execute the returned preview argv before the generation argv. Use v6 or another model currently returned by `gsuno models`. Earlier generation models have been retired; an old command using v4.5-all is no longer a cheap-draft workflow.
 
-`--download ./songs/` waits for completion and saves MP3s. `suno status <ids> --wait --download ./songs/` resumes existing work. `suno download <id> --format wav` requests a prepared WAV separately.
+`--download ./songs/` waits for completion and saves MP3s. `gsuno status <ids> --wait --download ./songs/` resumes existing work. `gsuno download <id> --format wav` requests a prepared WAV separately.
 
-For text only, `suno lyrics --prompt '...'` asks Suno for a lyric draft. For a broad idea without supplied lyrics, `suno describe --prompt '...'` asks Suno to create both words and audio.
+For text only, `gsuno lyrics --prompt '...'` asks Suno for a lyric draft. For a broad idea without supplied lyrics, `gsuno describe --prompt '...'` asks Suno to create both words and audio.

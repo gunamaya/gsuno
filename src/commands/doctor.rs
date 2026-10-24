@@ -110,7 +110,7 @@ fn check_auth(checks: &mut Vec<DoctorCheck>) -> Option<AuthState> {
             checks.push(DoctorCheck::fail(
                 "auth_file",
                 format!("{} not found", auth_json_path()),
-                "Run `suno auth --login`",
+                "Run `gsuno auth --login`",
             ));
             return None;
         }
@@ -118,7 +118,7 @@ fn check_auth(checks: &mut Vec<DoctorCheck>) -> Option<AuthState> {
             checks.push(DoctorCheck::fail(
                 "auth_file",
                 e.to_string(),
-                "Run `suno auth --login` to rewrite it",
+                "Run `gsuno auth --login` to rewrite it",
             ));
             return None;
         }
@@ -135,7 +135,7 @@ fn check_auth(checks: &mut Vec<DoctorCheck>) -> Option<AuthState> {
             checks.push(DoctorCheck::fail(
                 "jwt",
                 "no JWT and no Clerk session cookie stored",
-                "Run `suno auth --login`",
+                "Run `gsuno auth --login`",
             ));
             return None;
         }
@@ -152,7 +152,7 @@ fn check_auth(checks: &mut Vec<DoctorCheck>) -> Option<AuthState> {
             checks.push(DoctorCheck::fail(
                 "jwt",
                 "expired, and no Clerk session cookie to refresh with",
-                "Run `suno auth --login`",
+                "Run `gsuno auth --login`",
             ));
             return None;
         }
@@ -187,7 +187,7 @@ async fn check_solver_chrome(checks: &mut Vec<DoctorCheck>) {
         Some(port) => checks.push(DoctorCheck::warn(
             "solver_chrome",
             format!(
-                "something is still listening on solver port {port} — suno normally \
+                "something is still listening on solver port {port} — gsuno normally \
                  kills its Chrome on exit, so this is a crashed run's leftover or an \
                  unrelated service"
             ),
@@ -207,12 +207,12 @@ async fn check_api(checks: &mut Vec<DoctorCheck>, state: AuthState, chrome_avail
     let client = match SunoClient::new_with_refresh(state).await {
         Ok(c) => c,
         // An auth rejection is a setup failure, not a flaky-network warning:
-        // the fix is `suno auth`, so it must count toward exit 2.
+        // the fix is `gsuno auth`, so it must count toward exit 2.
         Err(e @ (CliError::AuthExpired | CliError::AuthMissing)) => {
             checks.push(DoctorCheck::fail(
                 "studio_api",
                 format!("authentication rejected: {e}"),
-                "Run `suno auth --refresh`, then `suno auth --login` if that fails",
+                "Run `gsuno auth --refresh`, then `gsuno auth --login` if that fails",
             ));
             return;
         }
@@ -220,7 +220,7 @@ async fn check_api(checks: &mut Vec<DoctorCheck>, state: AuthState, chrome_avail
             checks.push(DoctorCheck::warn(
                 "studio_api",
                 format!("could not build an authenticated client: {e}"),
-                Some("Run `suno auth --refresh`, then `suno auth --login` if that fails".into()),
+                Some("Run `gsuno auth --refresh`, then `gsuno auth --login` if that fails".into()),
             ));
             return;
         }
@@ -304,7 +304,7 @@ pub async fn run(fmt: OutputFormat, quiet: bool) -> Result<(), CliError> {
         return Err(CliError::Diagnostic {
             source: Box::new(CliError::Recovery {
                 source: Box::new(CliError::Config("doctor found failing checks".into())),
-                suggestion: "Fix the failed checks in error.details, then run `suno doctor` again"
+                suggestion: "Fix the failed checks in error.details, then run `gsuno doctor` again"
                     .into(),
             }),
             details: serde_json::to_value(&report)?,

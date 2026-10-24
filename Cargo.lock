@@ -1260,6 +1260,40 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0cc23270f6e1808e30a928bdc84dea0b9b4136a8bc82338574f23baf47bbd280"
 
 [[package]]
+name = "gsuno"
+version = "0.13.0"
+dependencies = [
+ "assert_cmd",
+ "base64",
+ "chrono",
+ "clap",
+ "comfy-table",
+ "directories",
+ "figment",
+ "flate2",
+ "futures-util",
+ "id3",
+ "indicatif",
+ "jsonschema",
+ "predicates",
+ "reqwest",
+ "rookie",
+ "self-replace",
+ "semver",
+ "serde",
+ "serde_json",
+ "sha2",
+ "tar",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-tungstenite",
+ "toml",
+ "uuid",
+ "zip",
+]
+
+[[package]]
 name = "hashbrown"
 version = "0.14.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3104,40 +3138,6 @@ name = "subtle"
 version = "2.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "13c2bddecc57b384dee18652358fb23172facb8a2c51ccc10d74c157bdea3292"
-
-[[package]]
-name = "suno"
-version = "0.12.0"
-dependencies = [
- "assert_cmd",
- "base64",
- "chrono",
- "clap",
- "comfy-table",
- "directories",
- "figment",
- "flate2",
- "futures-util",
- "id3",
- "indicatif",
- "jsonschema",
- "predicates",
- "reqwest",
- "rookie",
- "self-replace",
- "semver",
- "serde",
- "serde_json",
- "sha2",
- "tar",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "tokio-tungstenite",
- "toml",
- "uuid",
- "zip",
-]
 
 [[package]]
 name = "syn"

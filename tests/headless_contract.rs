@@ -1,7 +1,7 @@
 //! Offline and browser-free behavior that agents can rely on.
 
 mod common;
-use common::suno_in;
+use common::gsuno_in;
 
 fn json_stdout(out: &std::process::Output) -> serde_json::Value {
     assert!(
@@ -23,7 +23,7 @@ fn assert_invalid_before_auth(out: std::process::Output) {
 #[test]
 fn generate_dry_run_is_offline_v6_preview_and_writes_no_receipt() {
     let tmp = tempfile::tempdir().unwrap();
-    let out = suno_in(tmp.path())
+    let out = gsuno_in(tmp.path())
         .args([
             "--headless",
             "generate",
@@ -72,7 +72,7 @@ fn generate_dry_run_is_offline_v6_preview_and_writes_no_receipt() {
 #[test]
 fn describe_dry_run_is_offline_and_writes_no_receipt() {
     let tmp = tempfile::tempdir().unwrap();
-    let out = suno_in(tmp.path())
+    let out = gsuno_in(tmp.path())
         .args([
             "--headless",
             "describe",
@@ -105,7 +105,7 @@ fn describe_dry_run_is_offline_and_writes_no_receipt() {
 #[test]
 fn no_browser_auth_without_credentials_is_a_local_setup_error() {
     let tmp = tempfile::tempdir().unwrap();
-    let out = suno_in(tmp.path())
+    let out = gsuno_in(tmp.path())
         .args(["--no-browser", "auth", "--json"])
         .output()
         .unwrap();
@@ -122,7 +122,7 @@ fn oversized_unicode_description_is_rejected_before_auth() {
     // is 3,000 units, so 1,501 emoji must fail even though chars().count()
     // would report only 1,501.
     let prompt = "🎵".repeat(1501);
-    let out = suno_in(tmp.path())
+    let out = gsuno_in(tmp.path())
         .args(["--no-browser", "describe", "--prompt", &prompt, "--json"])
         .output()
         .unwrap();
@@ -134,7 +134,7 @@ fn oversized_unicode_description_is_rejected_before_auth() {
 fn non_finite_and_out_of_range_sliders_are_rejected_before_auth() {
     for (flag, value) in [("--weirdness", "NaN"), ("--style-influence", "101")] {
         let tmp = tempfile::tempdir().unwrap();
-        let out = suno_in(tmp.path())
+        let out = gsuno_in(tmp.path())
             .args([
                 "--no-browser",
                 "describe",
@@ -154,7 +154,7 @@ fn non_finite_and_out_of_range_sliders_are_rejected_before_auth() {
 #[test]
 fn empty_jobs_is_a_successful_no_results_envelope() {
     let tmp = tempfile::tempdir().unwrap();
-    let out = suno_in(tmp.path())
+    let out = gsuno_in(tmp.path())
         .args(["jobs", "--json"])
         .output()
         .unwrap();
@@ -166,7 +166,7 @@ fn empty_jobs_is_a_successful_no_results_envelope() {
 #[test]
 fn status_download_help_documents_that_it_waits() {
     let tmp = tempfile::tempdir().unwrap();
-    let out = suno_in(tmp.path())
+    let out = gsuno_in(tmp.path())
         .args(["status", "--help"])
         .output()
         .unwrap();
@@ -187,7 +187,7 @@ fn jobs_lists_valid_receipts_even_when_another_receipt_is_corrupt() {
         r#"{"state":"submitted","ids":["a"],"updated_at":"2026-09-28","transaction_id":"valid"}"#,
     )
     .unwrap();
-    let output = common::suno_in(tmp.path())
+    let output = common::gsuno_in(tmp.path())
         .args(["jobs", "--json"])
         .output()
         .unwrap();

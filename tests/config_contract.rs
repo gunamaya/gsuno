@@ -3,7 +3,7 @@
 //! the 0.5.x bug where the config file existed but nothing read it.
 
 mod common;
-use common::{config_path_in, suno_in, write_config_in};
+use common::{config_path_in, gsuno_in, write_config_in};
 
 fn show_json(cmd: &mut assert_cmd::Command) -> serde_json::Value {
     let out = cmd.args(["config", "show"]).output().unwrap();
@@ -14,7 +14,7 @@ fn show_json(cmd: &mut assert_cmd::Command) -> serde_json::Value {
 #[test]
 fn defaults_apply_in_empty_home() {
     let tmp = tempfile::tempdir().unwrap();
-    let json = show_json(&mut suno_in(tmp.path()));
+    let json = show_json(&mut gsuno_in(tmp.path()));
     assert_eq!(json["data"]["default_model"], "v6");
     assert_eq!(json["data"]["poll_interval_secs"], 5);
     assert_eq!(json["data"]["poll_timeout_secs"], 600);
@@ -23,7 +23,7 @@ fn defaults_apply_in_empty_home() {
 #[test]
 fn env_var_overrides_default() {
     let tmp = tempfile::tempdir().unwrap();
-    let json = show_json(suno_in(tmp.path()).env("SUNO_POLL_INTERVAL_SECS", "99"));
+    let json = show_json(gsuno_in(tmp.path()).env("SUNO_POLL_INTERVAL_SECS", "99"));
     assert_eq!(json["data"]["poll_interval_secs"], 99);
     // Untouched keys keep their defaults.
     assert_eq!(json["data"]["poll_timeout_secs"], 600);
@@ -33,7 +33,7 @@ fn env_var_overrides_default() {
 fn config_file_overrides_default() {
     let tmp = tempfile::tempdir().unwrap();
     write_config_in(tmp.path(), "poll_interval_secs = 42\n");
-    let json = show_json(&mut suno_in(tmp.path()));
+    let json = show_json(&mut gsuno_in(tmp.path()));
     assert_eq!(json["data"]["poll_interval_secs"], 42);
 }
 
@@ -41,14 +41,14 @@ fn config_file_overrides_default() {
 fn env_var_beats_config_file() {
     let tmp = tempfile::tempdir().unwrap();
     write_config_in(tmp.path(), "poll_interval_secs = 42\n");
-    let json = show_json(suno_in(tmp.path()).env("SUNO_POLL_INTERVAL_SECS", "99"));
+    let json = show_json(gsuno_in(tmp.path()).env("SUNO_POLL_INTERVAL_SECS", "99"));
     assert_eq!(json["data"]["poll_interval_secs"], 99);
 }
 
 #[test]
 fn config_set_persists_to_file() {
     let tmp = tempfile::tempdir().unwrap();
-    suno_in(tmp.path())
+    gsuno_in(tmp.path())
         .args(["config", "set", "poll_interval_secs", "7"])
         .assert()
         .code(0);
@@ -57,14 +57,14 @@ fn config_set_persists_to_file() {
     let contents = std::fs::read_to_string(path).unwrap();
     assert!(contents.contains("poll_interval_secs = 7"));
 
-    let json = show_json(&mut suno_in(tmp.path()));
+    let json = show_json(&mut gsuno_in(tmp.path()));
     assert_eq!(json["data"]["poll_interval_secs"], 7);
 }
 
 #[test]
 fn config_set_rejects_unknown_key() {
     let tmp = tempfile::tempdir().unwrap();
-    suno_in(tmp.path())
+    gsuno_in(tmp.path())
         .args(["config", "set", "nope", "1"])
         .assert()
         .code(3);
@@ -73,7 +73,7 @@ fn config_set_rejects_unknown_key() {
 #[test]
 fn config_set_rejects_invalid_model() {
     let tmp = tempfile::tempdir().unwrap();
-    suno_in(tmp.path())
+    gsuno_in(tmp.path())
         .args(["config", "set", "default_model", "v99"])
         .assert()
         .code(3);
@@ -82,7 +82,7 @@ fn config_set_rejects_invalid_model() {
 #[test]
 fn config_check_passes_on_clean_home() {
     let tmp = tempfile::tempdir().unwrap();
-    suno_in(tmp.path())
+    gsuno_in(tmp.path())
         .args(["config", "check"])
         .assert()
         .code(0);
@@ -92,7 +92,7 @@ fn config_check_passes_on_clean_home() {
 fn config_check_fails_on_malformed_file() {
     let tmp = tempfile::tempdir().unwrap();
     write_config_in(tmp.path(), "poll_interval_secs = \"not a number\"\n");
-    let out = suno_in(tmp.path())
+    let out = gsuno_in(tmp.path())
         .args(["config", "check"])
         .output()
         .unwrap();

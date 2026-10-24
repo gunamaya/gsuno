@@ -388,7 +388,7 @@ pub async fn clerk_refresh_jwt(
         .ok_or_else(|| CliError::Api {
             code: "no_jwt",
             message:
-                "Clerk returned no JWT — session may have expired, run `suno auth login` again"
+                "Clerk returned no JWT — session may have expired, run `gsuno auth login` again"
                     .into(),
         })
 }

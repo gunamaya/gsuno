@@ -1,4 +1,4 @@
-//! Shared test helpers: run the suno binary against a fully isolated home.
+//! Shared test helpers: run the gsuno binary against a fully isolated home.
 //!
 //! Overriding HOME alone is NOT enough. On Linux the `directories` crate
 //! prefers XDG_CONFIG_HOME over HOME; on Windows it reads the Known Folder
@@ -26,22 +26,22 @@ const AMBIENT_ENV: &[&str] = &[
     "SUNO_LIVE_TESTS",
 ];
 
-/// The suno binary with ambient SUNO_* scrubbed. For commands that touch
+/// The gsuno binary with ambient SUNO_* scrubbed. For commands that touch
 /// neither config nor state (contract, --help); everything else should use
-/// `suno_in` with a temp home.
-pub fn suno() -> Command {
-    let mut cmd = Command::cargo_bin("suno").unwrap();
+/// `gsuno_in` with a temp home.
+pub fn gsuno() -> Command {
+    let mut cmd = Command::cargo_bin("gsuno").unwrap();
     for key in AMBIENT_ENV {
         cmd.env_remove(key);
     }
     cmd
 }
 
-/// The suno binary with config and state isolated to `home`. SUNO_CONFIG_DIR
+/// The gsuno binary with config and state isolated to `home`. SUNO_CONFIG_DIR
 /// / SUNO_DATA_DIR are the load-bearing overrides (cross-platform); HOME and
 /// XDG are pinned too so nothing leaks on any platform.
-pub fn suno_in(home: &Path) -> Command {
-    let mut cmd = suno();
+pub fn gsuno_in(home: &Path) -> Command {
+    let mut cmd = gsuno();
     cmd.env("SUNO_CONFIG_DIR", home.join("config"))
         .env("SUNO_DATA_DIR", home.join("data"))
         .env("HOME", home)
@@ -56,7 +56,7 @@ pub fn suno_in(home: &Path) -> Command {
 /// Library/Application Support, Linux uses ~/.config) instead of hardcoding
 /// one platform's layout.
 pub fn config_path_in(home: &Path) -> PathBuf {
-    let out = suno_in(home)
+    let out = gsuno_in(home)
         .args(["config", "path", "--json"])
         .output()
         .unwrap();
@@ -77,7 +77,7 @@ pub fn write_config_in(home: &Path, contents: &str) -> PathBuf {
 
 /// Parse the agent-info manifest (raw JSON, not enveloped).
 pub fn agent_info() -> serde_json::Value {
-    let out = suno().arg("agent-info").output().unwrap();
+    let out = gsuno().arg("agent-info").output().unwrap();
     assert!(out.status.success());
     serde_json::from_slice(&out.stdout).expect("agent-info must be valid JSON")
 }

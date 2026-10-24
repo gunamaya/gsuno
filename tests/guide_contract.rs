@@ -1,16 +1,16 @@
 //! The built-in guides system: list, emit, alias resolution, the
 //! unknown-name error, and coherence between the agent-info `guides` array
-//! and what `suno guide` actually serves (single source of truth — no drift).
+//! and what `gsuno guide` actually serves (single source of truth — no drift).
 //!
-//! `guide` reads neither config nor auth nor network, so the scrubbed `suno()`
+//! `guide` reads neither config nor auth nor network, so the scrubbed `gsuno()`
 //! (no home isolation) is enough.
 
 mod common;
-use common::{agent_info, suno};
+use common::{agent_info, gsuno};
 use std::collections::BTreeSet;
 
 fn served_names() -> BTreeSet<String> {
-    let out = suno().args(["guide", "--json"]).output().unwrap();
+    let out = gsuno().args(["guide", "--json"]).output().unwrap();
     assert_eq!(out.status.code(), Some(0));
     let json: serde_json::Value = serde_json::from_slice(&out.stdout).unwrap();
     json["data"]
@@ -23,7 +23,7 @@ fn served_names() -> BTreeSet<String> {
 
 #[test]
 fn list_returns_both_guides_json() {
-    let out = suno().args(["guide", "--json"]).output().unwrap();
+    let out = gsuno().args(["guide", "--json"]).output().unwrap();
     assert_eq!(out.status.code(), Some(0));
     let json: serde_json::Value = serde_json::from_slice(&out.stdout).unwrap();
     assert_eq!(json["status"], "success");
@@ -45,7 +45,7 @@ fn list_returns_both_guides_json() {
 
 #[test]
 fn songwriting_guide_emits_markdown_with_anchors() {
-    let out = suno().args(["guide", "songwriting"]).output().unwrap();
+    let out = gsuno().args(["guide", "songwriting"]).output().unwrap();
     assert_eq!(out.status.code(), Some(0));
     let json: serde_json::Value = serde_json::from_slice(&out.stdout).unwrap();
     assert_eq!(json["data"]["name"], "songwriting");
@@ -64,7 +64,7 @@ fn songwriting_guide_emits_markdown_with_anchors() {
 
 #[test]
 fn priming_guide_emits_markdown_with_anchors() {
-    let out = suno().args(["guide", "priming"]).output().unwrap();
+    let out = gsuno().args(["guide", "priming"]).output().unwrap();
     assert_eq!(out.status.code(), Some(0));
     let json: serde_json::Value = serde_json::from_slice(&out.stdout).unwrap();
     assert_eq!(json["data"]["name"], "priming");
@@ -82,8 +82,8 @@ fn priming_guide_emits_markdown_with_anchors() {
 
 #[test]
 fn alias_resolves_to_canonical_guide() {
-    let canonical = suno().args(["guide", "songwriting"]).output().unwrap();
-    let via_alias = suno().args(["guide", "grammar"]).output().unwrap();
+    let canonical = gsuno().args(["guide", "songwriting"]).output().unwrap();
+    let via_alias = gsuno().args(["guide", "grammar"]).output().unwrap();
     assert_eq!(canonical.status.code(), Some(0));
     assert_eq!(via_alias.status.code(), Some(0));
     // Same bytes: the alias must resolve to the exact same guide.
@@ -92,7 +92,7 @@ fn alias_resolves_to_canonical_guide() {
 
 #[test]
 fn unknown_guide_exits_3_and_lists_available_names() {
-    let out = suno().args(["guide", "nonexistent"]).output().unwrap();
+    let out = gsuno().args(["guide", "nonexistent"]).output().unwrap();
     assert_eq!(out.status.code(), Some(3));
 
     // Piped → JSON error envelope on stderr, naming the available guides.
@@ -108,7 +108,7 @@ fn unknown_guide_exits_3_and_lists_available_names() {
 #[test]
 fn guides_alias_command_lists() {
     // The `guides` visible alias also reaches the list.
-    let out = suno().args(["guides", "--json"]).output().unwrap();
+    let out = gsuno().args(["guides", "--json"]).output().unwrap();
     assert_eq!(out.status.code(), Some(0));
     let json: serde_json::Value = serde_json::from_slice(&out.stdout).unwrap();
     assert!(!json["data"].as_array().unwrap().is_empty());
@@ -131,11 +131,11 @@ fn agent_info_guides_array_matches_the_registry() {
         .map(|g| g["name"].as_str().unwrap().to_string())
         .collect();
 
-    // Coherence: the manifest's guides list must equal what `suno guide` serves,
+    // Coherence: the manifest's guides list must equal what `gsuno guide` serves,
     // and every advertised guide must actually emit.
     assert_eq!(info_names, served_names());
     for name in &info_names {
-        let out = suno().args(["guide", name]).output().unwrap();
+        let out = gsuno().args(["guide", name]).output().unwrap();
         assert_eq!(
             out.status.code(),
             Some(0),

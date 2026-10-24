@@ -1,12 +1,12 @@
-//! Contract tests for the offline `suno prompt` brief builder and its
+//! Contract tests for the offline `gsuno prompt` brief builder and its
 //! hand-off to `generate --dry-run`.
 
 mod common;
-use common::suno_in;
+use common::gsuno_in;
 use serde_json::Value;
 
 fn prompt_json(home: &std::path::Path, args: &[&str]) -> Value {
-    let out = suno_in(home)
+    let out = gsuno_in(home)
         .arg("prompt")
         .args(args)
         .arg("--json")
@@ -127,9 +127,9 @@ fn emitted_preview_argv_round_trips_into_offline_generate() {
         .iter()
         .map(|arg| arg.as_str().unwrap().to_owned())
         .collect();
-    assert_eq!(argv.first().map(String::as_str), Some("suno"));
+    assert_eq!(argv.first().map(String::as_str), Some("gsuno"));
 
-    let out = suno_in(tmp.path())
+    let out = gsuno_in(tmp.path())
         .args(&argv[1..])
         .arg("--json")
         .output()
@@ -156,11 +156,11 @@ fn emitted_preview_argv_round_trips_into_offline_generate() {
 fn excessive_utf16_and_invalid_meter_are_bad_input() {
     let tmp = tempfile::tempdir().unwrap();
     let too_long = "🎵".repeat(501); // 1002 UTF-16 units.
-    suno_in(tmp.path())
+    gsuno_in(tmp.path())
         .args(["prompt", "--genre", &too_long, "--json"])
         .assert()
         .code(3);
-    suno_in(tmp.path())
+    gsuno_in(tmp.path())
         .args(["prompt", "--meter", "four-four", "--json"])
         .assert()
         .code(3);
@@ -173,7 +173,7 @@ fn force_does_not_bypass_placeholders_but_allow_placeholders_does() {
     std::fs::write(&lyrics_path, "[Verse]\n<finish this line>\n").unwrap();
     let path = lyrics_path.to_str().unwrap();
 
-    suno_in(tmp.path())
+    gsuno_in(tmp.path())
         .args([
             "generate",
             "--lyrics-file",
@@ -184,7 +184,7 @@ fn force_does_not_bypass_placeholders_but_allow_placeholders_does() {
         ])
         .assert()
         .code(3);
-    suno_in(tmp.path())
+    gsuno_in(tmp.path())
         .args([
             "generate",
             "--lyrics-file",

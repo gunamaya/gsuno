@@ -63,7 +63,7 @@ impl SunoClient {
         }
         if clip.status != "complete" {
             return Err(CliError::Download(format!(
-                "clip {} is {}; wait for completion with `suno status {} --wait`",
+                "clip {} is {}; wait for completion with `gsuno status {} --wait`",
                 clip.id, clip.status, clip.id
             )));
         }
@@ -83,7 +83,7 @@ impl SunoClient {
                 .await?;
             if receipt["ok"] != true {
                 return Err(CliError::Download(format!(
-                    "download authorization was not confirmed for {}; check `suno credits` and retry this download",
+                    "download authorization was not confirmed for {}; check `gsuno credits` and retry this download",
                     clip.id
                 )));
             }
@@ -201,7 +201,7 @@ impl SunoClient {
         };
         tokio::time::timeout_at(deadline, poll).await.map_err(|_| {
             CliError::Download(format!(
-                "preparation timed out for {id}; retry `suno download {id}`"
+                "preparation timed out for {id}; retry `gsuno download {id}`"
             ))
         })?
     }

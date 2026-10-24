@@ -443,7 +443,7 @@ async fn saved_request_never_silently_loses_ids_to_a_partial_feed() {
 fn removed_playback_source_is_rejected_by_cli() {
     use clap::Parser;
     let error =
-        crate::cli::Cli::try_parse_from(["suno", "download", "clip-id", "--source", "playback"])
+        crate::cli::Cli::try_parse_from(["gsuno", "download", "clip-id", "--source", "playback"])
             .err()
             .expect("removed source must fail");
     assert_eq!(error.kind(), clap::error::ErrorKind::InvalidValue);

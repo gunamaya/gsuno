@@ -9,11 +9,11 @@ mod common;
 use std::{collections::BTreeSet, path::Path};
 
 use clap::{Command, CommandFactory, Parser};
-use common::{suno_in, write_config_in};
+use common::{gsuno_in, write_config_in};
 use serde_json::Value;
 
 fn run_json(home: &Path, args: &[&str]) -> (Value, Vec<u8>) {
-    let out = suno_in(home).args(args).output().unwrap();
+    let out = gsuno_in(home).args(args).output().unwrap();
     assert_eq!(
         out.status.code(),
         Some(0),
@@ -125,7 +125,7 @@ fn info_without_an_id_is_the_discovery_alias() {
 fn unknown_empty_and_alias_filters_are_input_errors() {
     for path in ["", "unknown", "con", "configx", "ls", "contract"] {
         let home = tempfile::tempdir().unwrap();
-        let out = suno_in(home.path())
+        let out = gsuno_in(home.path())
             .args(["agent-info", "--command", path])
             .output()
             .unwrap();
@@ -204,7 +204,7 @@ fn every_advertised_example_parses_without_executing_it() {
             .unwrap_or_else(|| panic!("{path} examples"));
         assert!(!examples.is_empty(), "{path} needs an example");
         for example in examples {
-            let argv = std::iter::once("suno").chain(
+            let argv = std::iter::once("gsuno").chain(
                 example
                     .as_array()
                     .expect("example argv")

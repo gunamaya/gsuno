@@ -3,7 +3,7 @@
 //! costs, breaking changes) in sync with the actual CLI surface.
 
 mod common;
-use common::{agent_info, suno, vendored_schema};
+use common::{agent_info, gsuno, vendored_schema};
 
 #[test]
 fn manifest_validates_against_vendored_schema() {
@@ -17,7 +17,7 @@ fn manifest_validates_against_vendored_schema() {
 #[test]
 fn name_and_version_match_the_binary() {
     let info = agent_info();
-    assert_eq!(info["name"], "suno");
+    assert_eq!(info["name"], "gsuno");
     assert_eq!(info["version"], env!("CARGO_PKG_VERSION"));
 }
 
@@ -29,7 +29,7 @@ fn every_listed_command_is_routable() {
     for cmd in info["commands"].as_object().unwrap().keys() {
         let mut args: Vec<&str> = cmd.split_whitespace().collect();
         args.push("--help");
-        let out = suno().args(&args).output().unwrap();
+        let out = gsuno().args(&args).output().unwrap();
         assert!(
             out.status.success(),
             "command listed in agent-info is not routable: {cmd}"
@@ -50,7 +50,7 @@ fn advertised_options_exist_in_help() {
         };
         let mut args: Vec<&str> = cmd.split_whitespace().collect();
         args.push("--help");
-        let out = suno().args(&args).output().unwrap();
+        let out = gsuno().args(&args).output().unwrap();
         let help = String::from_utf8_lossy(&out.stdout);
         for opt in options {
             let name = opt["name"].as_str().unwrap();
@@ -85,7 +85,7 @@ fn models_map_includes_v4_5_all() {
     let info = agent_info();
     assert_eq!(info["models"]["v4.5-all"], "chirp-auk-turbo");
 
-    let out = suno().args(["generate", "--help"]).output().unwrap();
+    let out = gsuno().args(["generate", "--help"]).output().unwrap();
     let help = String::from_utf8_lossy(&out.stdout);
     assert!(help.contains("v4.5-all"), "--model must accept v4.5-all");
 }
@@ -95,7 +95,7 @@ fn models_map_matches_model_flag_values() {
     // Every model in the manifest must be selectable via --model, and the
     // dead --variation flag must stay dead.
     let info = agent_info();
-    let out = suno().args(["generate", "--help"]).output().unwrap();
+    let out = gsuno().args(["generate", "--help"]).output().unwrap();
     let help = String::from_utf8_lossy(&out.stdout);
     for model in info["models"].as_object().unwrap().keys() {
         assert!(help.contains(model.as_str()), "--model missing {model}");
@@ -160,7 +160,7 @@ fn headless_generation_recovery_and_download_contracts_are_explicit() {
 
     for flag in ["--headless", "--no-browser"] {
         assert!(info["global_flags"][flag].is_object());
-        let out = suno().arg("--help").output().unwrap();
+        let out = gsuno().arg("--help").output().unwrap();
         assert!(String::from_utf8_lossy(&out.stdout).contains(flag));
     }
     assert!(
@@ -307,7 +307,7 @@ fn help_documents_remote_pool_and_separate_lrc_export() {
             ],
         ),
     ] {
-        let out = suno().args(args).output().unwrap();
+        let out = gsuno().args(args).output().unwrap();
         assert!(out.status.success());
         let help = String::from_utf8(out.stdout).unwrap();
         for text in expected {

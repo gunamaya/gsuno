@@ -154,7 +154,7 @@ The CLI reserves a `0600` receipt before sending the paid POST. A receipt contai
   "updated_at": "<timestamp>",
   "state": "submitting | submitted | submission_unknown | rejected",
   "ids": ["<clip id>"],
-  "next_action": {"argv": ["suno", "status", "<clip id>", "--wait"]}
+  "next_action": {"argv": ["gsuno", "status", "<clip id>", "--wait"]}
 }
 ```
 
@@ -162,9 +162,9 @@ Receipts omit credentials, captcha tokens, and lyric text. `--request-id UUID` s
 
 Recovery sequence:
 
-1. `suno jobs`
-2. if the receipt has IDs, `suno status <ids> --wait --download DIR`
-3. if its outcome is unknown and it has no IDs, inspect `suno list` before any manual retry
+1. `gsuno jobs`
+2. if the receipt has IDs, `gsuno status <ids> --wait --download DIR`
+3. if its outcome is unknown and it has no IDs, inspect `gsuno list` before any manual retry
 
 `status` never submits generation. `--download` implies `--wait`, and downloaded clip objects include `local_path`.
 

@@ -1,10 +1,10 @@
-//! `suno write` — the native song composer. This is the integrated song
+//! `gsuno write` — the native song composer. This is the integrated song
 //! generator: it actively assembles a Suno-ready structured song (a Style
 //! Prompt line, a meta-tagged section skeleton with lyric placeholders, and a
 //! Suno Tags line) from a GENRE registry embedded here and derived faithfully
 //! from the "Genre-specific tag combinations" section of
 //! `assets/guides/songwriting.md`. The agent fills the `<...>` lyric
-//! placeholders, then runs `suno generate --lyrics-file`.
+//! placeholders, then runs `gsuno generate --lyrics-file`.
 //!
 //! Load-bearing invariant: anything `write` hands over as generation input
 //! must be directly consumable by `--lyrics-file` and carry no metadata that
@@ -665,7 +665,7 @@ struct PrimingMeta {
     subtlety: String,
 }
 
-/// Priming mode is consent-based (see `suno guide priming`); these fields are
+/// Priming mode is consent-based (see `gsuno guide priming`); these fields are
 /// what makes a request auditable, so they are required, not decorative.
 const PRIMING_DOMAINS: &[&str] = &[
     "investment",
@@ -764,7 +764,7 @@ fn compose(args: &WriteArgs) -> Result<Composition, CliError> {
             }
             if !missing.is_empty() {
                 return Err(CliError::InvalidInput(format!(
-                    "--mode priming requires {} — priming is consent-based and every run must be auditable; see `suno guide priming`",
+                    "--mode priming requires {} — priming is consent-based and every run must be auditable; see `gsuno guide priming`",
                     missing.join(", ")
                 )));
             }
@@ -911,7 +911,7 @@ impl Composition {
     }
 
     /// The meta-tagged section skeleton with inline `<...>` placeholders. This
-    /// is the block the agent fills and hands to `suno generate --lyrics-file`.
+    /// is the block the agent fills and hands to `gsuno generate --lyrics-file`.
     fn structure(&self) -> String {
         let theme = self.theme.as_deref().unwrap_or("your theme");
         let hook = if self.viral { "[Catchy Hook]\n" } else { "" };
@@ -1005,7 +1005,7 @@ impl Composition {
         s
     }
 
-    /// The `suno generate` argv a caller runs after filling the lyrics —
+    /// The `gsuno generate` argv a caller runs after filling the lyrics —
     /// derived from actual state, so it references the real `--out` path and
     /// every resolved control. `None` when no lyrics file was written: an
     /// executable command must never name a file that does not exist.
@@ -1013,7 +1013,7 @@ impl Composition {
     fn generate_argv(&self) -> Option<Vec<String>> {
         let out = self.out.as_ref()?;
         let mut argv = vec![
-            "suno".to_string(),
+            "gsuno".to_string(),
             "generate".to_string(),
             "--title".to_string(),
             self.title.clone(),
@@ -1067,14 +1067,14 @@ impl Composition {
     }
 
     /// The priming Prime-Stack Map template + research-artefact skeleton. Kept
-    /// deliberately light — the heavy methodology lives in `suno guide priming`.
+    /// deliberately light — the heavy methodology lives in `gsuno guide priming`.
     fn prime_stack_block(&self) -> String {
         let Some(p) = self.priming.as_ref() else {
             return String::new();
         };
         format!(
             "Prime-Stack Map\n\
-             Select evidence-graded primes via `suno guide priming` (Grade B+ for load-bearing; Grade C decoration only).\n\
+             Select evidence-graded primes via `gsuno guide priming` (Grade B+ for load-bearing; Grade C decoration only).\n\
              | Section | Prime | Evidence Grade | Rationale |\n\
              |---|---|---|---|\n\
              | [Verse 1] | <seed prime — e.g. mere exposure> | <A/B> | <first exposure; brand/name in the first 10s> |\n\
@@ -1089,7 +1089,7 @@ impl Composition {
              Subtlety: {subtlety}\n\
              Predicted effect (calibrated priors): recall d≈0.4-0.6 · positive affect d≈0.3-0.5 · attitude shift d≈0.1-0.3 · behaviour d≈0.0-0.15\n\
              Ordering rule: never claim behaviour > attitude > recall.\n\
-             Consent frame, prime library, phonetic name-embedding, and pre-registration template: `suno guide priming`.",
+             Consent frame, prime library, phonetic name-embedding, and pre-registration template: `gsuno guide priming`.",
             target = p.target,
             objective = p.objective,
             domain = p.domain,
@@ -1245,12 +1245,12 @@ pub fn run(args: WriteArgs, fmt: OutputFormat, quiet: bool) -> Result<(), CliErr
                         );
                     }
                     None => eprintln!(
-                        "Re-run with `--out song.txt` to get the exact `suno generate` command."
+                        "Re-run with `--out song.txt` to get the exact `gsuno generate` command."
                     ),
                 }
                 if comp.mode == WriteMode::Priming {
                     eprintln!(
-                        "Priming: complete the Prime-Stack Map with graded primes — `suno guide priming`."
+                        "Priming: complete the Prime-Stack Map with graded primes — `gsuno guide priming`."
                     );
                 }
             }

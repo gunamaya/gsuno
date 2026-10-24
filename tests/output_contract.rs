@@ -3,7 +3,7 @@
 //! the binary in a pipe (not a TTY), so JSON auto-detection is active.
 
 mod common;
-use common::{suno, vendored_schema};
+use common::{gsuno, vendored_schema};
 
 fn assert_valid_error_envelope(stderr: &[u8]) -> serde_json::Value {
     let json: serde_json::Value =
@@ -19,7 +19,7 @@ fn assert_valid_error_envelope(stderr: &[u8]) -> serde_json::Value {
 
 #[test]
 fn success_envelope_shape() {
-    let out = suno().args(["contract", "0"]).output().unwrap();
+    let out = gsuno().args(["contract", "0"]).output().unwrap();
     assert!(out.status.success());
 
     let json: serde_json::Value = serde_json::from_slice(&out.stdout).unwrap();
@@ -31,7 +31,7 @@ fn success_envelope_shape() {
 #[test]
 fn quiet_still_emits_json() {
     // --quiet suppresses stderr chatter, never the envelope.
-    let out = suno()
+    let out = gsuno()
         .args(["contract", "0", "--json", "--quiet"])
         .output()
         .unwrap();
@@ -43,7 +43,10 @@ fn quiet_still_emits_json() {
 
 #[test]
 fn unknown_command_is_a_clean_json_error() {
-    let out = suno().arg("definitely-not-a-command-xyz").output().unwrap();
+    let out = gsuno()
+        .arg("definitely-not-a-command-xyz")
+        .output()
+        .unwrap();
     assert_eq!(out.status.code(), Some(3));
     assert!(out.stdout.is_empty(), "errors must not pollute stdout");
 
@@ -54,7 +57,7 @@ fn unknown_command_is_a_clean_json_error() {
 #[test]
 fn parse_error_wrapped_in_envelope() {
     // `describe` requires --prompt.
-    let out = suno().arg("describe").output().unwrap();
+    let out = gsuno().arg("describe").output().unwrap();
     assert_eq!(out.status.code(), Some(3));
 
     let json = assert_valid_error_envelope(&out.stderr);
@@ -76,7 +79,7 @@ fn error_code_matches_exit_code_semantics() {
         ("4", "rate_limited"),
     ];
     for (code, expected) in cases {
-        let out = suno().args(["contract", code]).output().unwrap();
+        let out = gsuno().args(["contract", code]).output().unwrap();
         let json = assert_valid_error_envelope(&out.stderr);
         assert_eq!(json["error"]["code"], expected, "contract {code}");
     }
@@ -86,7 +89,7 @@ fn error_code_matches_exit_code_semantics() {
 
 #[test]
 fn piped_help_wrapped_with_tips_and_examples() {
-    let out = suno().arg("--help").output().unwrap();
+    let out = gsuno().arg("--help").output().unwrap();
     assert!(out.status.success());
 
     let json: serde_json::Value =
@@ -107,7 +110,7 @@ fn piped_help_wrapped_with_tips_and_examples() {
 
 #[test]
 fn piped_version_wrapped_in_envelope() {
-    let out = suno().arg("--version").output().unwrap();
+    let out = gsuno().arg("--version").output().unwrap();
     assert!(out.status.success());
 
     let json: serde_json::Value =

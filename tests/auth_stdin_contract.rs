@@ -2,7 +2,7 @@
 //! network request when stdin or flag selection is invalid.
 
 mod common;
-use common::suno_in;
+use common::gsuno_in;
 
 fn assert_invalid(out: std::process::Output) {
     assert_eq!(out.status.code(), Some(3));
@@ -17,7 +17,7 @@ fn assert_invalid(out: std::process::Output) {
 #[test]
 fn cookie_stdin_rejects_empty_input_offline() {
     let tmp = tempfile::tempdir().unwrap();
-    let out = suno_in(tmp.path())
+    let out = gsuno_in(tmp.path())
         .args(["auth", "--cookie-stdin"])
         .write_stdin(" \n\t")
         .output()
@@ -28,7 +28,7 @@ fn cookie_stdin_rejects_empty_input_offline() {
 #[test]
 fn jwt_stdin_rejects_empty_input_offline() {
     let tmp = tempfile::tempdir().unwrap();
-    let out = suno_in(tmp.path())
+    let out = gsuno_in(tmp.path())
         .args(["auth", "--jwt-stdin"])
         .write_stdin("")
         .output()
@@ -39,7 +39,7 @@ fn jwt_stdin_rejects_empty_input_offline() {
 #[test]
 fn cookie_stdin_rejects_oversized_input_offline() {
     let tmp = tempfile::tempdir().unwrap();
-    let out = suno_in(tmp.path())
+    let out = gsuno_in(tmp.path())
         .args(["auth", "--cookie-stdin"])
         .write_stdin(vec![b'x'; 65_537])
         .output()
@@ -50,7 +50,7 @@ fn cookie_stdin_rejects_oversized_input_offline() {
 #[test]
 fn stdin_auth_flags_conflict() {
     let tmp = tempfile::tempdir().unwrap();
-    let out = suno_in(tmp.path())
+    let out = gsuno_in(tmp.path())
         .args(["auth", "--cookie-stdin", "--jwt-stdin"])
         .write_stdin("unused")
         .output()
@@ -61,7 +61,7 @@ fn stdin_auth_flags_conflict() {
 #[test]
 fn direct_and_stdin_cookie_flags_conflict() {
     let tmp = tempfile::tempdir().unwrap();
-    let out = suno_in(tmp.path())
+    let out = gsuno_in(tmp.path())
         .args(["auth", "--cookie", "unused", "--cookie-stdin"])
         .write_stdin("unused")
         .output()

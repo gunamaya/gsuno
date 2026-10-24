@@ -3,12 +3,12 @@
 //! `install-skill` spelling still routes.
 
 mod common;
-use common::suno_in;
+use common::gsuno_in;
 
 #[test]
 fn install_writes_all_platforms() {
     let tmp = tempfile::tempdir().unwrap();
-    let out = suno_in(tmp.path())
+    let out = gsuno_in(tmp.path())
         .args(["skill", "install"])
         .output()
         .unwrap();
@@ -33,12 +33,12 @@ fn install_writes_all_platforms() {
 #[test]
 fn reinstall_is_idempotent() {
     let tmp = tempfile::tempdir().unwrap();
-    suno_in(tmp.path())
+    gsuno_in(tmp.path())
         .args(["skill", "install"])
         .assert()
         .code(0);
 
-    let out = suno_in(tmp.path())
+    let out = gsuno_in(tmp.path())
         .args(["skill", "install"])
         .output()
         .unwrap();
@@ -51,12 +51,12 @@ fn reinstall_is_idempotent() {
 #[test]
 fn status_reports_installed_and_current() {
     let tmp = tempfile::tempdir().unwrap();
-    suno_in(tmp.path())
+    gsuno_in(tmp.path())
         .args(["skill", "install"])
         .assert()
         .code(0);
 
-    let out = suno_in(tmp.path())
+    let out = gsuno_in(tmp.path())
         .args(["skill", "status"])
         .output()
         .unwrap();
@@ -71,5 +71,5 @@ fn status_reports_installed_and_current() {
 #[test]
 fn install_skill_back_compat_alias_routes() {
     let tmp = tempfile::tempdir().unwrap();
-    suno_in(tmp.path()).arg("install-skill").assert().code(0);
+    gsuno_in(tmp.path()).arg("install-skill").assert().code(0);
 }

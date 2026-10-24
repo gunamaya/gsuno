@@ -23,12 +23,12 @@ const DIMENSIONS: &[&str] = &[
 fn build(args: &PromptArgs) -> Result<Value, CliError> {
     let presets: Value = serde_json::from_str(PRESETS)?;
     if args.list_presets {
-        return Ok(json!({"presets": presets, "guide": "suno guide prompting"}));
+        return Ok(json!({"presets": presets, "guide": "gsuno guide prompting"}));
     }
     let mut brief = if let Some(name) = &args.preset {
         presets.get(name).cloned().ok_or_else(|| {
             CliError::InvalidInput(format!(
-                "unknown preset '{name}'; use suno prompt --list-presets"
+                "unknown preset '{name}'; use gsuno prompt --list-presets"
             ))
         })?
     } else {
@@ -133,7 +133,7 @@ fn build(args: &PromptArgs) -> Result<Value, CliError> {
         .filter(|&&k| brief[k].is_null() && !(k == "voice" && args.instrumental))
         .collect();
     let mut argv: Vec<String> = vec![
-        "suno".into(),
+        "gsuno".into(),
         "generate".into(),
         "--model".into(),
         "v6".into(),
@@ -190,9 +190,9 @@ fn build(args: &PromptArgs) -> Result<Value, CliError> {
     Ok(json!({
         "brief": brief, "style_prompt": tags, "negative_tags": exclude,
         "instrumental": args.instrumental, "missing_directions": missing, "warnings": warnings,
-        "controls": {"weirdness": null, "style_influence": null, "note": "No slider preset is imposed. Read suno guide prompting before choosing overrides."},
-        "next_action": if ready { json!({"argv": argv, "preview_argv": preview, "note": "Keep this request ID when retrying the same song. Audition both results before a larger batch."}) } else { json!({"argv": ["suno", "guide", "songwriting"], "note": "Write the lyrics, then rerun prompt with --lyrics-file; or use --instrumental for music without vocals."}) },
-        "guide": "suno guide prompting"
+        "controls": {"weirdness": null, "style_influence": null, "note": "No slider preset is imposed. Read gsuno guide prompting before choosing overrides."},
+        "next_action": if ready { json!({"argv": argv, "preview_argv": preview, "note": "Keep this request ID when retrying the same song. Audition both results before a larger batch."}) } else { json!({"argv": ["gsuno", "guide", "songwriting"], "note": "Write the lyrics, then rerun prompt with --lyrics-file; or use --instrumental for music without vocals."}) },
+        "guide": "gsuno guide prompting"
     }))
 }
 
