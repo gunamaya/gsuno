@@ -3,7 +3,7 @@
 ## 0.13.0
 
 - Rename the crate, executable, agent skill and command examples to `gsuno`. Install with `cargo install --locked gsuno`; update integrations to invoke `gsuno` instead of `suno`.
-- Fetch standalone updates and gsuno archives from `anggi-susanto/suno-cli`.
+- Fetch standalone updates and gsuno archives from `gunamaya/gsuno`.
 - Preserve all `SUNO_*` environment variables (including remote-pool integration), legacy config directories and `.suno` state so existing sessions continue working. No automatic migration or deletion of the old binary or skill.
 
 ## v0.12.0 — Direct HTTPS remote-pool downloads

@@ -170,7 +170,7 @@ impl CliError {
                 "Supply --token, or omit --no-browser to allow the captcha solver (use --headless for invisible Chrome)"
             }
             Self::Api { code, .. } if *code == "schema_drift" => {
-                "Suno changed their API or rolled out hCaptcha enforcement. Try (1) `gsuno auth --refresh` to mint a fresh JWT, (2) `gsuno update` to pull the latest fix, (3) supply an hCaptcha solution via `--token <solved>`, or (4) see https://github.com/anggi-susanto/suno-cli/issues for the current status"
+                "Suno changed their API or rolled out hCaptcha enforcement. Try (1) `gsuno auth --refresh` to mint a fresh JWT, (2) `gsuno update` to pull the latest fix, (3) supply an hCaptcha solution via `--token <solved>`, or (4) see https://github.com/gunamaya/gsuno/issues for the current status"
             }
             Self::Api { .. } | Self::Http(_) => "Check your network connection and retry",
             Self::Io(_) => "Check file permissions and disk space",
