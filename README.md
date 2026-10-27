@@ -6,7 +6,7 @@
 
 <br />
 
-[![Star this repo](https://img.shields.io/github/stars/anggi-susanto/suno-cli?style=for-the-badge&logo=github&label=%E2%AD%90%20Star%20this%20repo&color=yellow)](https://github.com/anggi-susanto/suno-cli/stargazers)
+[![Star this repo](https://img.shields.io/github/stars/gunamaya/gsuno?style=for-the-badge&logo=github&label=%E2%AD%90%20Star%20this%20repo&color=yellow)](https://github.com/gunamaya/gsuno/stargazers)
 &nbsp;&nbsp;
 [![Follow @longevityboris](https://img.shields.io/badge/Follow_%40longevityboris-000000?style=for-the-badge&logo=x&logoColor=white)](https://x.com/longevityboris)
 
@@ -18,7 +18,7 @@
 &nbsp;
 [![crates.io](https://img.shields.io/crates/v/suno?style=for-the-badge)](https://crates.io/crates/gsuno)
 &nbsp;
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=for-the-badge)](https://github.com/anggi-susanto/suno-cli/pulls)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=for-the-badge)](https://github.com/gunamaya/gsuno/pulls)
 
 ---
 
@@ -60,7 +60,7 @@ cargo install --locked gsuno
 
 ### Pre-built binaries
 
-Download from [GitHub Releases](https://github.com/anggi-susanto/suno-cli/releases) — binaries for macOS (Apple Silicon + Intel), Linux (x86_64 + ARM), and Windows.
+Download from [GitHub Releases](https://github.com/gunamaya/gsuno/releases) — binaries for macOS (Apple Silicon + Intel), Linux (x86_64 + ARM), and Windows.
 
 ### Updating
 
@@ -644,7 +644,7 @@ Built by [Boris Djordjevic](https://github.com/longevityboris) at [199 Biotechno
 
 **If this saves you time:**
 
-[![Star this repo](https://img.shields.io/github/stars/anggi-susanto/suno-cli?style=for-the-badge&logo=github&label=%E2%AD%90%20Star%20this%20repo&color=yellow)](https://github.com/anggi-susanto/suno-cli/stargazers)
+[![Star this repo](https://img.shields.io/github/stars/gunamaya/gsuno?style=for-the-badge&logo=github&label=%E2%AD%90%20Star%20this%20repo&color=yellow)](https://github.com/gunamaya/gsuno/stargazers)
 &nbsp;&nbsp;
 [![Follow @longevityboris](https://img.shields.io/badge/Follow_%40longevityboris-000000?style=for-the-badge&logo=x&logoColor=white)](https://x.com/longevityboris)
 
