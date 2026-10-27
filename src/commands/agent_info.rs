@@ -950,7 +950,16 @@ pub fn manifest(filter: Option<&str>) -> Result<Value, CliError> {
 }
 
 pub fn run(filter: Option<&str>) -> Result<(), CliError> {
-    output::json::print(&manifest(filter)?)
+    let filter = filter.map(|s| s.to_string());
+    let handle = std::thread::Builder::new()
+        .name("agent-info".into())
+        .stack_size(8 * 1024 * 1024)
+        .spawn(move || manifest(filter.as_deref()))
+        .map_err(CliError::Io)?;
+    let res = handle
+        .join()
+        .map_err(|_| CliError::Config("agent-info thread panicked".into()))??;
+    output::json::print(&res)
 }
 
 #[cfg(test)]
