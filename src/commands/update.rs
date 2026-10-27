@@ -20,8 +20,7 @@ use crate::errors::CliError;
 use crate::output::OutputFormat;
 
 const RELEASES_URL: &str = "https://github.com/gunamaya/gsuno/releases";
-const LATEST_RELEASE_API: &str =
-    "https://api.github.com/repos/gunamaya/gsuno/releases/latest";
+const LATEST_RELEASE_API: &str = "https://api.github.com/repos/gunamaya/gsuno/releases/latest";
 const MAX_ARCHIVE_BYTES: u64 = 64 * 1024 * 1024;
 const MAX_METADATA_BYTES: u64 = 1024 * 1024;
 const CONNECT_TIMEOUT: Duration = Duration::from_secs(10);
