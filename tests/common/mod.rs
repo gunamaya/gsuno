@@ -78,7 +78,14 @@ pub fn write_config_in(home: &Path, contents: &str) -> PathBuf {
 /// Parse the agent-info manifest (raw JSON, not enveloped).
 pub fn agent_info() -> serde_json::Value {
     let out = gsuno().arg("agent-info").output().unwrap();
-    assert!(out.status.success());
+    if !out.status.success() {
+        panic!(
+            "agent-info failed with status {:?}:\nSTDOUT: {}\nSTDERR: {}",
+            out.status.code(),
+            String::from_utf8_lossy(&out.stdout),
+            String::from_utf8_lossy(&out.stderr)
+        );
+    }
     serde_json::from_slice(&out.stdout).expect("agent-info must be valid JSON")
 }
 
